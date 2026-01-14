@@ -1,5 +1,21 @@
 import React from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text } from "react-native";
+
+const styles = StyleSheet.create({
+  emoji: {
+    fontSize: 50,
+  },
+  ring: {
+    borderWidth: 2,
+    borderColor: "white",
+    borderRadius: 999,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+  },
+  pressedOpacity: {
+    opacity: 0.8,
+  },
+});
 
 export function SosButton() {
   const confirmSos = () => {
@@ -10,11 +26,8 @@ export function SosButton() {
       );
 
       if (confirmed) {
-        window.alert(
-          "Stay where you are! Emergency services are on the way!"
-        );
+        window.alert("Stay where you are! Emergency services are on the way!");
       }
-
       return;
     }
 
@@ -23,40 +36,20 @@ export function SosButton() {
   };
 
   return (
-    <Pressable
-      onPress={confirmSos}
-      style={({ pressed }) => [styles.btn, pressed && styles.pressed]}
-      hitSlop={12}
-    >
-      <View style={styles.emojiWrapper}>
-        <Text style={styles.text}>🚨</Text>
-      </View>
+    <Pressable onPress={confirmSos} hitSlop={16}>
+      {({ pressed }) => (
+        <Text
+          style={[
+            styles.emoji,
+            pressed && styles.ring,
+            pressed && styles.pressedOpacity,
+            pressed && { transform: [{ scale: 1.15 }] },
+          ]}
+        >
+          🚨
+        </Text>
+      )}
     </Pressable>
   );
 }
-
-const styles = StyleSheet.create({
-  btn: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#dc2626",
-  },
-  pressed: {
-    opacity: 1,
-  },
-  emojiWrapper: {
-    width: 38,
-    height: 38,
-    borderRadius: 18,
-    backgroundColor: "white", // 👈 contrast
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  text: {
-    fontSize: 25,
-  },
-});
 

@@ -1,112 +1,122 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet, View } from 'react-native';
+import { Image } from 'react-native';
+import { ScrollView, StyleSheet } from 'react-native';
+import { Link, LinkTrigger } from 'expo-router';
 
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { SosButton } from '@/components/SOSButton.native';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
+
+
+type EventItem = {
+  id: number;
+  title: string;
+  date: string;
+  place: string;
+  picture: any;
+};
 
 export default function HomeScreen() {
+  const event: EventItem = { id: 0, title: '', date: '', place: '', picture: null };
+
+  const Events: EventItem[] = [
+    {
+      ...event,
+      id: 1,
+      title: 'Cocomelon',
+      date: '1969',
+      place: 'Birmingham',
+      picture: require('@/assets/images/widebinkydog.png'),
+    },
+    {
+      ...event,
+      id: 2,
+      title: 'Pisdrink',
+      date: '909900',
+      place: 'KKK',
+      picture: require('@/assets/images/firebase.png'),
+    },
+    {
+      ...event,
+      id: 3,
+      title: 'hi',
+      date: 'im',
+      place: 'dave',
+      picture: require('@/assets/images/favicon.png'),
+    },
+  ];
+
   return (
-    <View style={styles.root}>
-      <ParallaxScrollView
-        headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-        headerImage={
-          <Image
-            source={require('@/assets/images/partial-react-logo.png')}
-            style={styles.reactLogo}
-          />
-        }
-      >
-        <ThemedView style={styles.titleContainer}>
-          <ThemedText type="title">Welcome!</ThemedText>
-          <HelloWave />
-        </ThemedView>
-
-        <ThemedView style={styles.stepContainer}>
-          <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-          <ThemedText>
-            Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-            Press{' '}
-            <ThemedText type="defaultSemiBold">
-              {Platform.select({
-                ios: 'cmd + d',
-                android: 'cmd + m',
-                web: 'F12',
-              })}
-            </ThemedText>{' '}
-            to open developer tools.
-          </ThemedText>
-        </ThemedView>
-
-        <ThemedView style={styles.stepContainer}>
-          <Link href="/modal">
-            <Link.Trigger>
-              <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-            </Link.Trigger>
-            <Link.Preview />
-            <Link.Menu>
-              <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-              <Link.MenuAction
-                title="Share"
-                icon="square.and.arrow.up"
-                onPress={() => alert('Share pressed')}
-              />
-              <Link.Menu title="More" icon="ellipsis">
-                <Link.MenuAction
-                  title="Delete"
-                  icon="trash"
-                  destructive
-                  onPress={() => alert('Delete pressed')}
-                />
-              </Link.Menu>
-            </Link.Menu>
+    <>
+      <ScrollView contentContainerStyle={styles.eventListContainer}>
+        {Events.map((event) => (
+          <Link
+            key={event.id}
+            style={styles.link}
+            href={{
+              pathname: '/modalEvent',
+              params: {
+                id: event.id,
+                title: event.title,
+                date: event.date,
+              },
+            }}
+          >
+            <LinkTrigger>
+              <ThemedView style={styles.view}>
+                <Image source={event.picture} style={styles.eventPicture} />
+                <ThemedText type="title">{event.title}</ThemedText>
+                <ThemedText>{event.date}</ThemedText>
+                <ThemedText>{event.place}</ThemedText>
+              </ThemedView>
+            </LinkTrigger>
           </Link>
+        ))}
+      </ScrollView>
 
-          <ThemedText>
-            {`Tap the Explore tab to learn more about what's included in this starter app.`}
-          </ThemedText>
+      {/* Optional floating SOS button (uncomment if needed)
+      <ThemedView pointerEvents="box-none" style={styles.overlay}>
+        <ThemedView pointerEvents="box-none" style={styles.sosFloat}>
+          <SosButton />
         </ThemedView>
-
-        <ThemedView style={styles.stepContainer}>
-          <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-          <ThemedText>
-            {`When you're ready, run `}
-            <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-            <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-            <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-            <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-          </ThemedText>
-        </ThemedView>
-      </ParallaxScrollView>
-    </View>
+      </ThemedView>
+      */}
+    </>
   );
 }
 
 const styles = StyleSheet.create({
-  root: {
+  eventListContainer: {
     flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'flex-start',
+    padding: 40,
+    gap: 30,
   },
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+  link: {
+    padding: 10,
+    minHeight: 300,
+    maxHeight: 400,
+    borderRadius: 15,
+    borderWidth: 6,
+    borderColor: '#2ba84a',
+    backgroundColor: '#181d27',
+    overflow: 'hidden',
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  eventPicture: {
+    maxHeight: 180,
+    maxWidth: 380,
+    resizeMode: 'cover',
+    borderRadius: 10,
+    backgroundColor: '#181d27',
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  view: {
+    width: '100%',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    backgroundColor: '#181d27',
+    gap: 6,
   },
 
-  // Full-screen overlay above everything
+  // Full-screen overlay above everything (for floating button etc.)
   overlay: {
     position: 'absolute',
     top: 0,
@@ -114,16 +124,13 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     zIndex: 9999,
-    elevation: 9999, // Android
+    elevation: 9999,
   },
-
-  // Button position (bottom-right)
   sosFloat: {
     position: 'absolute',
     right: 20,
     bottom: 28,
     zIndex: 10000,
-    elevation: 10000, // Android
+    elevation: 10000,
   },
 });
-

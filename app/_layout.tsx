@@ -1,11 +1,9 @@
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
-import { StyleSheet, View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import { SosButton } from '@/components/SOSButton.native'; // <-- adjust if your path/name differs
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
@@ -14,16 +12,17 @@ export default function RootLayout() {
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <View style={styles.root}>
         <Stack>
-          <Stack.Screen name="auth/Login" options={{ headerShown: false }} />
-          {/* other screens are still handled by the router */}
-        </Stack>
+          {/* Tabs */}
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
 
-        {/* ✅ GLOBAL SOS BUTTON OVERLAY */}
-        <View pointerEvents="box-none" style={styles.overlay}>
-          <View pointerEvents="auto" style={styles.sosFloat}>
-            <SosButton />
-          </View>
-        </View>
+          {/* Auth */}
+          <Stack.Screen name="auth/Login" options={{ headerShown: false }} />
+          <Stack.Screen name="auth/Register" options={{ headerShown: false }} />
+
+          {/* Modals */}
+          <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
+          <Stack.Screen name="modalEvent" options={{ presentation: 'modal' }} />
+        </Stack>
 
         <StatusBar style="auto" />
       </View>
@@ -32,23 +31,7 @@ export default function RootLayout() {
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1 },
-
-  overlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    zIndex: 9999,
-    elevation: 9999, // Android
-  },
-
-  sosFloat: {
-    position: 'absolute',
-    right: 20,
-    bottom: 28,
-    zIndex: 10000,
-    elevation: 10000,
+  root: {
+    flex: 1,
   },
 });
