@@ -1,11 +1,7 @@
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { Colors } from '@/constants/theme';
-import { ScrollView } from 'react-native';
-import { StyleSheet } from 'react-native';
-import { blue } from 'react-native-reanimated/lib/typescript/Colors';
-import { Image } from 'react-native';
 import { Link, LinkTrigger } from 'expo-router';
+import { Image, ScrollView, StyleSheet } from 'react-native';
 import { Events } from '@/constants/eventList'
 import { useThemeColor } from '@/hooks/use-theme-color';
 
