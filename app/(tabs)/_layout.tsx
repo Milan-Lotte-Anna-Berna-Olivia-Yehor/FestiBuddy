@@ -1,6 +1,6 @@
 import { Stack, Tabs } from 'expo-router';
 import React from 'react';
-
+import { Text } from "react-native";
 import { HapticTab } from '@/components/haptic-tab';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Colors } from '@/constants/theme';
@@ -31,9 +31,10 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name='sos'
+        name="sos"
         options={{
-          title: 'SOS',
+          title: "SOS",
+          tabBarIcon: ({ color }) => <Text style={{ fontSize: 20 }}>❗</Text>
         }}
       />
       <Tabs.Screen
