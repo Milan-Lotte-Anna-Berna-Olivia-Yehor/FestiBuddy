@@ -6,36 +6,27 @@ import { StyleSheet } from 'react-native';
 import { blue } from 'react-native-reanimated/lib/typescript/Colors';
 import { Image } from 'react-native';
 import { Link, LinkTrigger } from 'expo-router';
+import { Events } from '@/constants/eventList'
+import { useThemeColor } from '@/hooks/use-theme-color';
 
 export default function HomeScreen() {
-  
-  const event = { id: 0, title:"", date: "", place: "", picture: ""}
-
-  const Events =[
-    {...event, id: 1, title: "Cocomelon", date: "1969", place: "Birmingham", picture: require('@/assets/images/widebinkydog.png')},
-    {...event, id: 2, title: "Pisdrink", date: "909900", place: "KKK", picture: require('@/assets/images/firebase.png')},
-    {...event, id: 3, title: "hi", date: "im", place: "dave", picture: require('@/assets/images/favicon.png')}
-  ]
 
   return (
     <ScrollView contentContainerStyle={styles.eventListContainer}>
       {Events.map(event =>{
-        const modalLink = `/modalEvent?id=${event.id}`
 
         return(
           <Link style={styles.link} href={{
             pathname: "/modalEvent",
             params: {
-              id: event.id,
-              title: event.title,
-              date: event.date
+              id: event.id
             }
           }}>
             <LinkTrigger>
               <ThemedView style={styles.view}>
                 <Image source={event.picture} style={styles.eventPicture}/>
                 <ThemedText type='title'>{event.title}</ThemedText>
-                <ThemedText>{event.date.toString()}</ThemedText>
+                <ThemedText>{event.date.toLocaleString()}</ThemedText>
                 <ThemedText>{event.place}</ThemedText>
               </ThemedView>
             </LinkTrigger>
@@ -66,6 +57,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   eventPicture: {
+    marginBottom: 10,
     maxHeight: 180,
     maxWidth: 380,
     resizeMode: "cover",
@@ -76,6 +68,6 @@ const styles = StyleSheet.create({
     width: "100%",
     flexDirection: "column",
     justifyContent:"center",
-    backgroundColor: "#181d27",
+    backgroundColor: "#1b1d2b"
   }
 })

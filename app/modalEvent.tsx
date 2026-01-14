@@ -4,17 +4,23 @@ import { StyleSheet } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { useSearchParams } from 'expo-router/build/hooks';
+import { Events } from '@/constants/eventList'
+import { Image } from 'react-native';
+import { ScrollView } from 'react-native';
 
 export default function ModalScreen() {
 
   const params = useSearchParams();
-
+  let event = Events.find(ev => ev.id.toString() === params.get("id"))
+  
   return (
-    <ThemedView style={styles.container}>
-      <ThemedText type="title">id: {params.get("id")}</ThemedText>
-      <ThemedText type="title">title: {params.get("title")}</ThemedText>
-      <ThemedText type="title">date: {params.get("date")}</ThemedText>
-    </ThemedView>
+    <ScrollView contentContainerStyle = {styles.scrollView}>
+      <ThemedView style={styles.container}>
+        <Image source={event?.picture ?? require("@/assets/images/icon.png")}/>
+        <ThemedText type="title">title: {params.get("title")}</ThemedText>
+        <ThemedText type="title">date: {params.get("date")}</ThemedText>
+      </ThemedView>
+    </ScrollView>
   );
 }
 
@@ -29,4 +35,9 @@ const styles = StyleSheet.create({
     marginTop: 15,
     paddingVertical: 15,
   },
+  scrollView: {
+    flex: 1,
+    flexDirection: "column",
+    
+  }
 });
