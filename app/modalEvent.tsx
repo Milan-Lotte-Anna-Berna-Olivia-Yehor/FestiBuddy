@@ -1,4 +1,4 @@
-import { Link } from 'expo-router';
+import { Link, LinkTrigger } from 'expo-router';
 import { StyleSheet } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
@@ -27,8 +27,16 @@ export default function ModalScreen() {
     <ScrollView contentContainerStyle = {styles.scrollView}>
       <ThemedView style={styles.container}>
         <Image source={event?.picture} style={styles.image}/>
-        <ThemedText type="title">title: {params.get("title")}</ThemedText>
-        <ThemedText type="title">date: {params.get("date")}</ThemedText>
+        <ThemedText type="title" style={styles.title}>{event?.title}</ThemedText>
+        {/* <ThemedText>{event?.date.toDateString()} at {event?.date.toLocaleTimeString()}</ThemedText> */}
+        <ThemedText>📍 {event?.place}</ThemedText>
+        <Link href='/(tabs)/schedule'>
+          <LinkTrigger>
+            <ThemedText type='link'>See schedule with artists for this event...</ThemedText>
+          </LinkTrigger>
+        </Link>
+        <ThemedText type='subtitle' style={styles.description}>Description:</ThemedText>
+        <ThemedText>{event?.description}</ThemedText>
       </ThemedView>
     </ScrollView>
   );
@@ -37,21 +45,27 @@ export default function ModalScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
     padding: 20,
-  },
-  link: {
-    marginTop: 15,
-    paddingVertical: 15,
   },
   scrollView: {
     flex: 1,
     flexDirection: "column",
+    justifyContent: "center"
 
   },
   image: {
-    
+    width: "100%",
+    maxHeight: 400,
+    resizeMode: "cover",
+    borderRadius: 10,
+    marginBottom: 30
+  },
+  title: {
+    fontSize: 50,
+    marginBottom: 20
+  },
+  description: {
+    marginTop: 15
   }
 });
 
