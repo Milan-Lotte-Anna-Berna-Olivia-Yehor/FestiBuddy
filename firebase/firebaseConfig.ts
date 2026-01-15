@@ -16,7 +16,7 @@ const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
  
 // ✅ Firestore is safe everywhere
 export const db = getFirestore(app);
- 
+
 // ✅ Analytics is web-only (avoid "window is not defined")
 export const analytics =
   typeof window !== "undefined"
