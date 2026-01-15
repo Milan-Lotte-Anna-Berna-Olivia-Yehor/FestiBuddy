@@ -14,6 +14,10 @@ const firebaseConfig = {
 // ✅ Prevent re-initializing during hot reload
 const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 
+ 
+// ✅ Prevent re-initializing during hot reload
+const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+ 
 // ✅ Firestore is safe everywhere
 export const db = getFirestore(app);
 
@@ -25,3 +29,5 @@ export const analytics =
     : null;
  
 export default app;
+
+

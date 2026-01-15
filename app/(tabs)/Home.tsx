@@ -7,9 +7,8 @@ import { Image, ScrollView, StyleSheet } from 'react-native';
 export default function HomeScreen() {
 
   return (
-    <ScrollView contentContainerStyle={styles.eventListContainer}>
+    <ScrollView style={{ backgroundColor: '#000' }} contentContainerStyle={styles.eventListContainer}>
       {Events.map(event =>{
-
         return(
           <Link style={styles.link} href={{
             pathname: "/modalEvent",
@@ -47,7 +46,7 @@ const styles = StyleSheet.create({
     maxHeight: 400,
     borderRadius: 15,
     borderWidth: 6,
-    borderColor: "#2ba84a",
+    borderColor: "#b0ff4b",
     backgroundColor: "#181d27",
     overflow: "hidden",
   },
