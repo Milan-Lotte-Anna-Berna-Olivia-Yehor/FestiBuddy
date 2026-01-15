@@ -1,5 +1,4 @@
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
+import { getApp, getApps, initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
  
 const firebaseConfig = {
@@ -12,8 +11,17 @@ const firebaseConfig = {
   measurementId: "G-SJTVFWT9JM"
 };
  
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+// ✅ Prevent re-initializing during hot reload
+const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
  
-export const db = getFirestore(app)
+// ✅ Firestore is safe everywhere
+export const db = getFirestore(app);
+ 
+// ✅ Analytics is web-only (avoid "window is not defined")
+export const analytics =
+  typeof window !== "undefined"
+    ? // require() so it’s only loaded in the browser
+      require("firebase/analytics").getAnalytics(app)
+    : null;
+ 
 export default app;
