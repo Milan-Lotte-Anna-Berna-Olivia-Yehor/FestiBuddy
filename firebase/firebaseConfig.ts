@@ -1,6 +1,7 @@
 import { getApp, getApps, initializeApp } from "firebase/app";
+import { initializeApp, getApp, getApps } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
- 
+
 const firebaseConfig = {
   apiKey: "AIzaSyCjhgy2MO9ecg-mZw2u1hm_naaP6y0C_94",
   authDomain: "festibuddy-ed60f.firebaseapp.com",
@@ -8,7 +9,7 @@ const firebaseConfig = {
   storageBucket: "festibuddy-ed60f.firebasestorage.app",
   messagingSenderId: "524662060526",
   appId: "1:524662060526:web:565465b7c348d272d5caff",
-  measurementId: "G-SJTVFWT9JM"
+  measurementId: "G-SJTVFWT9JM",
 };
  
 // ✅ Prevent re-initializing during hot reload
@@ -17,6 +18,13 @@ const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 // ✅ Firestore is safe everywhere
 export const db = getFirestore(app);
  
+
+// ✅ Prevent re-initializing during hot reload
+const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+
+// ✅ Firestore is safe everywhere
+export const db = getFirestore(app);
+
 // ✅ Analytics is web-only (avoid "window is not defined")
 export const analytics =
   typeof window !== "undefined"
@@ -24,4 +32,6 @@ export const analytics =
       require("firebase/analytics").getAnalytics(app)
     : null;
  
+export default app;
+
 export default app;
