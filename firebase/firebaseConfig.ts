@@ -10,6 +10,10 @@ const firebaseConfig = {
   appId: "1:524662060526:web:565465b7c348d272d5caff",
   measurementId: "G-SJTVFWT9JM",
 };
+
+// ✅ Prevent re-initializing during hot reload
+const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+
  
 // ✅ Prevent re-initializing during hot reload
 const app = getApps().length ? getApp() : initializeApp(firebaseConfig);

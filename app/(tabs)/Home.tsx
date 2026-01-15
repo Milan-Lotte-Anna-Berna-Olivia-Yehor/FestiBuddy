@@ -1,3 +1,5 @@
+import { ThemedText } from '@/components/themed-text';
+import { ThemedView } from '@/components/themed-view';
 import { Events } from '@/constants/eventList';
 import { Link, LinkTrigger } from 'expo-router';
 import { Image, ScrollView, StyleSheet } from 'react-native';

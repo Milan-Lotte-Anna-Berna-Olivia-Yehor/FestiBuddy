@@ -1,6 +1,6 @@
+import { SosButton } from "@/components/SOSButton.native";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
-import { SosButton } from "@/components/SOSButton.native";
 
 export default function SOS() {
   return (
