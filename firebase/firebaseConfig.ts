@@ -11,10 +11,9 @@ const firebaseConfig = {
   measurementId: "G-SJTVFWT9JM",
 };
  
-
 // ✅ Prevent re-initializing during hot reload
 const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
-
+ 
 // ✅ Firestore is safe everywhere
 export const db = getFirestore(app);
 
