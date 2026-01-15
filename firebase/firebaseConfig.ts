@@ -1,5 +1,4 @@
 import { getApp, getApps, initializeApp } from "firebase/app";
-import { initializeApp, getApp, getApps } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
@@ -11,12 +10,6 @@ const firebaseConfig = {
   appId: "1:524662060526:web:565465b7c348d272d5caff",
   measurementId: "G-SJTVFWT9JM",
 };
- 
-// ✅ Prevent re-initializing during hot reload
-const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
- 
-// ✅ Firestore is safe everywhere
-export const db = getFirestore(app);
  
 
 // ✅ Prevent re-initializing during hot reload
@@ -34,4 +27,4 @@ export const analytics =
  
 export default app;
 
-export default app;
+
