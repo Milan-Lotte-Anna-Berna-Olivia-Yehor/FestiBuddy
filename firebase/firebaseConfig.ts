@@ -1,5 +1,4 @@
 import { getApp, getApps, initializeApp } from "firebase/app";
-import { initializeApp, getApp, getApps } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
@@ -18,13 +17,6 @@ const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 // ✅ Firestore is safe everywhere
 export const db = getFirestore(app);
  
-
-// ✅ Prevent re-initializing during hot reload
-const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
-
-// ✅ Firestore is safe everywhere
-export const db = getFirestore(app);
-
 // ✅ Analytics is web-only (avoid "window is not defined")
 export const analytics =
   typeof window !== "undefined"
@@ -34,4 +26,4 @@ export const analytics =
  
 export default app;
 
-export default app;
+
