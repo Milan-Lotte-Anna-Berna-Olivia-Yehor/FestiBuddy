@@ -1,37 +1,47 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+// app/_layout.tsx
 import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import { View, StyleSheet } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { ActivityIndicator, View } from 'react-native';
 
-import { useColorScheme } from '@/hooks/use-color-scheme';
+// Mock auth check function (replace with real logic)
+const checkUserLoggedIn = async () => {
+  // Example: AsyncStorage.getItem('token') or API call
+  return false; // default: not logged in
+};
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
+  const [isLoading, setIsLoading] = useState(true);
+  const [loggedIn, setLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const init = async () => {
+      const logged = await checkUserLoggedIn();
+      setLoggedIn(logged);
+      setIsLoading(false);
+    };
+    init();
+  }, []);
+
+  if (isLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <View style={styles.root}>
-        <Stack>
-          {/* Tabs */}
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-
-          {/* Auth */}
-          <Stack.Screen name="auth/Login" options={{ headerShown: false }} />
-          <Stack.Screen name="auth/Register" options={{ headerShown: false }} />
-
-          {/* Modals */}
-          <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
-          <Stack.Screen name="modalEvent" options={{ presentation: 'modal' }} />
-        </Stack>
-
-        <StatusBar style="auto" />
-      </View>
-    </ThemeProvider>
+    <Stack screenOptions={{ headerShown: false }}>
+      {loggedIn ? (
+        // User is logged in → show tabs
+        <Stack.Screen name="(tabs)/home" />
+      ) : (
+        // User not logged in → show login and register
+        <>
+          <Stack.Screen name="(auth)/index" />
+          <Stack.Screen name="(auth)/register" />
+        </>
+      )}
+    </Stack>
   );
 }
-
-const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-  },
-});

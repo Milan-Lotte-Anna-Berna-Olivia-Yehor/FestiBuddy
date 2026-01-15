@@ -3,9 +3,6 @@ import ProfileButton from '@/components/ProfileButton.native';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import { Tabs } from 'expo-router';
-import React from 'react';
-import { Image, Text, View } from "react-native";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -19,7 +16,7 @@ export default function TabLayout() {
         tabBarStyle: { backgroundColor: '#000' },
       }}>
       <Tabs.Screen
-        name="index"
+        name="Home"
         options={{
           title: 'Home',
           headerShown: true,
