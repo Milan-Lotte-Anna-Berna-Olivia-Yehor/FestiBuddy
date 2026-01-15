@@ -2,14 +2,14 @@ import { router } from 'expo-router';
 import { createUserWithEmailAndPassword, getAuth, updateProfile } from 'firebase/auth';
 import React, { useState } from 'react';
 import {
-    ActivityIndicator,
-    Alert,
-    Image,
-    Pressable,
-    StyleSheet,
-    Text,
-    TextInput,
-    View,
+  ActivityIndicator,
+  Alert,
+  Image,
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
 } from 'react-native';
 import app from '../../firebase/firebaseConfig';
 

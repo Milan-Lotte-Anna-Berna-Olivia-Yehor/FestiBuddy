@@ -1,9 +1,8 @@
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
+import { Events } from '@/constants/eventList';
 import { Link, LinkTrigger } from 'expo-router';
 import { Image, ScrollView, StyleSheet } from 'react-native';
-import { Events } from '@/constants/eventList'
-import { useThemeColor } from '@/hooks/use-theme-color';
 
 export default function HomeScreen() {
 
