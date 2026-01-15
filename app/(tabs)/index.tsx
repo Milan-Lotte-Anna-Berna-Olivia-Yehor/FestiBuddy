@@ -1,14 +1,14 @@
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
 import { Link, LinkTrigger } from 'expo-router';
 import { Image, ScrollView, StyleSheet } from 'react-native';
-import { Events } from '@/constants/eventList'
-import { useThemeColor } from '@/hooks/use-theme-color';
+
+import { ThemedText } from '@/components/themed-text';
+import { ThemedView } from '@/components/themed-view';
+import { Events } from '@/constants/eventList';
 
 export default function HomeScreen() {
 
   return (
-    <ScrollView contentContainerStyle={styles.eventListContainer}>
+    <ScrollView style={{ backgroundColor: '#000' }} contentContainerStyle={styles.eventListContainer}>
       {Events.map(event =>{
 
         return(
@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
     maxHeight: 400,
     borderRadius: 15,
     borderWidth: 6,
-    borderColor: "#2ba84a",
+    borderColor: "#b0ff4b",
     backgroundColor: "#181d27",
     overflow: "hidden",
   },
