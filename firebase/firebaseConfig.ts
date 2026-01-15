@@ -1,6 +1,6 @@
 import { initializeApp, getApp, getApps } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
- 
+
 const firebaseConfig = {
   apiKey: "AIzaSyCjhgy2MO9ecg-mZw2u1hm_naaP6y0C_94",
   authDomain: "festibuddy-ed60f.firebaseapp.com",
@@ -25,3 +25,4 @@ export const analytics =
     : null;
  
 export default app;
+
