@@ -54,6 +54,7 @@ export default function Register() {
 
       setLoading(false);
 
+      router.replace('/login')
       // 3️⃣ Show alert and navigate to login
       Alert.alert(
         'Success',
@@ -61,7 +62,7 @@ export default function Register() {
         [
           {
             text: 'OK',
-            onPress: () => router.replace('./index'), // Go to login screen
+            onPress: () => router.replace('/login'), // Go to login screen
           },
         ]
       );
@@ -108,7 +109,7 @@ export default function Register() {
 
       <View style={styles.register}>
         <Text style={styles.link}>Already have an account? </Text>
-        <Pressable onPress={() => router.replace('./index')}>
+        <Pressable onPress={() => router.replace('/login')}>
           <Text style={[styles.link, { color: 'teal' }]}>Login</Text>
         </Pressable>
       </View>
