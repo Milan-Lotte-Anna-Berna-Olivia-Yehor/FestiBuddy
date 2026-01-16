@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { useSearchParams } from 'expo-router/build/hooks';
+import { usePathname, useSearchParams } from 'expo-router/build/hooks';
 import { Events } from '@/constants/eventList'
 import { Image } from 'react-native';
 import { ScrollView } from 'react-native';
@@ -28,9 +28,14 @@ export default function ModalScreen() {
       <ThemedView style={styles.container}>
         <Image source={event?.picture} style={styles.image}/>
         <ThemedText type="title" style={styles.title}>{event?.title}</ThemedText>
-        {/* <ThemedText>{event?.date.toDateString()} at {event?.date.toLocaleTimeString()}</ThemedText> */}
+        <ThemedText>{event?.date.toDateString()} at {event?.date.toLocaleTimeString()}</ThemedText>
         <ThemedText>📍 {event?.place}</ThemedText>
-        <Link href='/(tabs)/schedule'>
+        <Link href={{
+          pathname: '/(tabs)/schedule',
+          params: {
+            id: event?.id
+          }
+        }}>
           <LinkTrigger>
             <ThemedText type='link'>See schedule with artists for this event...</ThemedText>
           </LinkTrigger>

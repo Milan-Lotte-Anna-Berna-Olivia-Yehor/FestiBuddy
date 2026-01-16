@@ -22,9 +22,7 @@ export default function HomeScreen() {
               <ThemedView style={styles.view}>
                 <Image source={event.picture} style={styles.eventPicture}/>
                 <ThemedText type='title'>{event.title}</ThemedText>
-                <ThemedText>
-                  {event.start_date.toDateString()} {event.start_date != event.end_date && event.end_date.toDateString()}
-                </ThemedText>
+                <ThemedText>{event.date.toLocaleString()}</ThemedText>
                 <ThemedText>{event.place}</ThemedText>
               </ThemedView>
             </LinkTrigger>
