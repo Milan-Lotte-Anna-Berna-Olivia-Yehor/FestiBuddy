@@ -1,4 +1,5 @@
 import { initializeApp, getApp, getApps } from "firebase/app";
+import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
@@ -16,6 +17,7 @@ const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
  
 // ✅ Firestore is safe everywhere
 export const db = getFirestore(app);
+export const auth = getAuth(app);
 
 // ✅ Analytics is web-only (avoid "window is not defined")
 export const analytics =

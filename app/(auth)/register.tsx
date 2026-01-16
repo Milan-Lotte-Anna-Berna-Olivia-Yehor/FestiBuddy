@@ -12,6 +12,22 @@ import {
   View,
 } from 'react-native';
 import app from '../../firebase/firebaseConfig';
+import { doc, setDoc } from "firebase/firestore";
+// import { auth } from "@/lib/firebase";
+import { db } from '../../firebase/firebaseConfig';
+
+const createUserDoc = async () => {
+  const user = getAuth(app).currentUser;
+  if (!user) return;
+
+  const userRef = doc(db, "users", user.uid);
+
+  await setDoc(userRef, {
+    email: user.email,
+    createdAt: new Date(),
+    likedArtists: [],
+  });
+};
 
 export default function Register() {
   const [loading, setLoading] = useState(false);
@@ -34,6 +50,7 @@ export default function Register() {
 
       // 2️⃣ Set display name
       await updateProfile(response.user, { displayName: userName });
+      await createUserDoc()
 
       setLoading(false);
 

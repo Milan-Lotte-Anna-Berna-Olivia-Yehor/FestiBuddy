@@ -1,10 +1,8 @@
 import { Artists } from "@/constants/artistList";
 import { Events } from "@/constants/eventList";
 import { useSearchParams } from "expo-router/build/hooks";
-import { Scroll } from "lucide-react-native";
 import React, { useState } from "react";
 import {
-  FlatList,
   Image,
   SafeAreaView,
   StyleSheet,
@@ -13,9 +11,53 @@ import {
   View,
 } from "react-native";
 import { ScrollView } from "react-native";
+import { auth, db } from "@/firebase/firebaseConfig";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 
 
 export default function LineupScreen() {
+
+  const [likedArtists, setLikedArtists] = React.useState<number[]>([]);
+
+  React.useEffect(() => {
+    const loadLikes = async () => {
+      const user = auth.currentUser;
+      if (!user) return;
+
+      const userRef = doc(db, "users", user.uid);
+      const snap = await getDoc(userRef);
+
+      if (snap.exists()) {
+        setLikedArtists(snap.data()?.likedArtists || []);
+      }
+    };
+
+    loadLikes();
+  }, []);
+
+  const toggleLike = async (artistId: number) => {
+    const user = auth.currentUser;
+    if (!user) return;
+
+    const userRef = doc(db, "users", user.uid);
+    const isLiked = likedArtists.includes(artistId);
+
+    let newLikes: number[];
+
+    if (isLiked) {
+      // Unlike
+      newLikes = likedArtists.filter(id => id !== artistId);
+    } else {
+      // Like
+      newLikes = [...likedArtists, artistId];
+    }
+
+    // Optimistic update
+    setLikedArtists(newLikes);
+
+    // Save to Firestore
+    await setDoc(userRef, { likedArtists: newLikes }, { merge: true });
+  };
 
   const params = useSearchParams();
   let event = Events.find(ev => ev.id.toString() === params.get("id"))
@@ -38,9 +80,9 @@ export default function LineupScreen() {
                 style={styles.avatar}
               />
               <Text style={styles.artist}>{artist.name}</Text>
-              {/* <TouchableOpacity onPress={() => toggleLike(dateKey, ar.id)}>
-                <Text style={{ color: item.liked ? "#ff5fa2" : "#fff", fontSize: 18 }}>♥</Text>
-              </TouchableOpacity> */}
+              <TouchableOpacity onPress={() => toggleLike(ar.id)}>
+                <Text style={{ color: likedArtists.includes(ar.id) ? "#ff5fa2" : "#fff", fontSize: 18 }}>♥</Text>
+              </TouchableOpacity>
             </View>
             );
           })}
@@ -64,3 +106,5 @@ const styles = StyleSheet.create({
   avatar: { width: 48, height: 48, borderRadius: 6, marginHorizontal: 12 },
   artist: { flex: 1, color: "#fff", fontSize: 16 },
 });
+
+
