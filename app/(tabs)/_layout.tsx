@@ -44,9 +44,9 @@ export default function TabLayout() {
       />
 
       <Tabs.Screen
-        name="schedule"
+        name="personalTable"
         options={{
-          title: 'Schedule',
+          title: 'Personal Timetable',
           tabBarIcon: ({ color }: { color: string }) => (
             <Image
               source={require('../../assets/images/home_schedule-removebg-preview.png')}

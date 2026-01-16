@@ -31,7 +31,7 @@ export default function ModalScreen() {
         <ThemedText>{event?.date.toDateString()} at {event?.date.toLocaleTimeString()}</ThemedText>
         <ThemedText>📍 {event?.place}</ThemedText>
         <Link href={{
-          pathname: '/(tabs)/schedule',
+          pathname: '/modalSchedule',
           params: {
             id: event?.id
           }
