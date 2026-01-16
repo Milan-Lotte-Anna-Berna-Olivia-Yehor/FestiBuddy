@@ -1,26 +1,26 @@
 export const Artists = [
     {
-        id: 1,
+        id: 0,
         name: "Cheesy Grease"
     },
     {
-        id: 2,
+        id: 1,
         name: "Paft Dunk"
     },
     {
-        id: 3,
+        id: 2,
         name: "Justin Bober"
     },
     {
-        id: 4,
+        id: 3,
         name: "Tyler, a creator"
     },
     {
-        id: 5,
+        id: 4,
         name: "Openheimer"
     },
     {
-        id: 6,
+        id: 5,
         name: "Joseph Joestar"
     }
 ]
