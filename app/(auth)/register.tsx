@@ -1,5 +1,6 @@
 import { router } from 'expo-router';
 import { createUserWithEmailAndPassword, getAuth, updateProfile } from 'firebase/auth';
+import { doc, setDoc } from "firebase/firestore";
 import React, { useState } from 'react';
 import {
   ActivityIndicator,
@@ -12,7 +13,6 @@ import {
   View,
 } from 'react-native';
 import app from '../../firebase/firebaseConfig';
-import { doc, setDoc } from "firebase/firestore";
 // import { auth } from "@/lib/firebase";
 import { db } from '../../firebase/firebaseConfig';
 
