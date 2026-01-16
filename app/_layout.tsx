@@ -59,6 +59,9 @@ export default function RootLayout() {
           name={userRole === "organizer" ? "(tabs-organizer)" : "(tabs)"}
         />
       )}
+
+      <Stack.Screen name="modalEvent" options={{headerShown: true, title: "", headerStyle: { backgroundColor: '#000' }, headerTintColor: "#ffffff"}}/>
+      <Stack.Screen name="modalSchedule" options={{headerShown: true, title: "", headerStyle: { backgroundColor: '#000' }, headerTintColor: "#ffffff"}}/>
     </Stack>
   );
 }
