@@ -20,17 +20,7 @@ export default function Message() {
 
   return (
     <>
-      <Stack.Screen
-        options={{
-          title: `Chat with ${friendName || 'Friend'}`,
-          headerBackTitle: 'Friends',
-          headerStyle: { backgroundColor: '#000' },
-          headerTintColor: '#fff',
-          headerTitleStyle: { color: '#fff' },
-          headerShadowVisible: false,
-          headerLeft: () => null,
-        }}
-      />
+      <Stack.Screen options={{ headerShown: true, title: '', headerStyle: { backgroundColor: '#000' }, headerTintColor: '#fff', headerTitleStyle: { color: '#fff' }, headerShadowVisible: false}} />
       <View style={styles.container}>
         <View style={styles.friendInfo}>
           <View style={styles.profilePic}></View>

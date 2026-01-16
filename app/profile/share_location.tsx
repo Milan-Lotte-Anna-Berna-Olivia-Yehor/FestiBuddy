@@ -7,7 +7,7 @@ export default function ShareLocation() {
 
   return (
     <>
-      <Stack.Screen options={{ title: '', headerStyle: { backgroundColor: '#000' }, headerTintColor: '#fff', headerTitleStyle: { color: '#fff' }, headerShadowVisible: false, headerLeft: () => null }} />
+      <Stack.Screen options={{ headerShown: true, title: '', headerStyle: { backgroundColor: '#000' }, headerTintColor: '#fff', headerTitleStyle: { color: '#fff' }, headerShadowVisible: false}} />
       <View style={styles.container}>
 
         <Text style={styles.shareText}>Share your real time location with:</Text>

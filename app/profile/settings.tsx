@@ -6,7 +6,7 @@ export default function Settings() {
 
   return (
     <>
-      <Stack.Screen options={{ title: 'Settings', headerBackTitle: 'Profile', headerStyle: { backgroundColor: '#000' }, headerTintColor: '#fff', headerTitleStyle: { color: '#fff' }, headerShadowVisible: false, headerLeft: () => null }} />
+      <Stack.Screen options={{ headerShown: true, title: '', headerStyle: { backgroundColor: '#000' }, headerTintColor: '#fff', headerTitleStyle: { color: '#fff' }, headerShadowVisible: false}} />
       <View style={styles.container}>
         <Text style={styles.title}>Settings</Text>
 

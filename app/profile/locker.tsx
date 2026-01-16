@@ -6,7 +6,7 @@ export default function Locker() {
 
   return (
     <>
-      <Stack.Screen options={{ title: 'Locker', headerBackTitle: 'Profile', headerStyle: { backgroundColor: '#000' }, headerTintColor: '#fff', headerTitleStyle: { color: '#fff' }, headerShadowVisible: false, headerLeft: () => null }} />
+      <Stack.Screen options={{ headerShown: true, title: '', headerStyle: { backgroundColor: '#000' }, headerTintColor: '#fff', headerTitleStyle: { color: '#fff' }, headerShadowVisible: false}} />
       <View style={styles.container}>
         <Text style={styles.title}>Locker Information</Text>
 

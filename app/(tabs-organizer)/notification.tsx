@@ -13,7 +13,7 @@ export default function NotificationScreen() {
 
   const handleSend = async () => {
     if (!title || !message) {
-      Alert.alert("Error", "Please fill in all fields");
+      alert("Please fill in the fields?");
       return;
     }
 
@@ -25,7 +25,7 @@ export default function NotificationScreen() {
         type: 'standard',
         createdAt: serverTimestamp(),
       });
-
+      alert("message sent")
       Alert.alert("Message Sent", "Notification broadcasted successfully!", [
         { text: "OK", onPress: () => {
           setTitle('');

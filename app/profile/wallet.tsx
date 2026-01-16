@@ -17,7 +17,7 @@ export default function Wallet() {
 
   return (
     <>
-      <Stack.Screen options={{ title: 'Wallet', headerBackTitle: 'Profile', headerStyle: { backgroundColor: '#000' }, headerTintColor: '#fff', headerTitleStyle: { color: '#fff' }, headerShadowVisible: false, headerLeft: () => null }} />
+      <Stack.Screen options={{ headerShown: true, title: '', headerStyle: { backgroundColor: '#000' }, headerTintColor: '#fff', headerTitleStyle: { color: '#fff' }, headerShadowVisible: false}} />
       <View style={styles.container}>
         <Text style={styles.title}>Wallet</Text>
 

@@ -1,4 +1,4 @@
-import { useRouter } from 'expo-router';
+import { LinkTrigger, useRouter } from 'expo-router';
 import { AlertTriangle, Bell, Calendar, UserCircle, Users } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
 import { SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -6,6 +6,8 @@ import { SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } fr
 // Firebase Imports
 import { collection, onSnapshot, query, where } from 'firebase/firestore';
 import { db } from '../../firebase/firebaseConfig';
+import { Link } from 'expo-router';
+import { push } from 'expo-router/build/global-state/routing';
 
 const FestiBuddyAdmin = () => {
   const router = useRouter();
@@ -31,7 +33,7 @@ const FestiBuddyAdmin = () => {
         
         <View style={styles.header}>
           <Text style={styles.logoText}>festibuddy</Text>
-          <UserCircle color="#ADFF2F" size={32} />
+          <UserCircle color="#ADFF2F" size={32} onPress={() => {router.push("/profile")}}/>
         </View>
 
         <Text style={styles.title}>Admin Dashboard</Text>
