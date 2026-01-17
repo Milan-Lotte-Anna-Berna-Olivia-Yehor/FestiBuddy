@@ -6,7 +6,7 @@ export default function Friends() {
 
    return (
      <>
-       <Stack.Screen options={{ title: '', headerStyle: { backgroundColor: '#000' }, headerTintColor: '#fff', headerTitleStyle: { color: '#fff' }, headerShadowVisible: false, headerLeft: () => null }} />
+       <Stack.Screen options={{ headerShown: true, title: '', headerStyle: { backgroundColor: '#000' }, headerTintColor: '#fff', headerTitleStyle: { color: '#fff' }, headerShadowVisible: false}} />
        <View style={styles.container}>
        {/* Page title */}
        <Text style={styles.title}>Friends</Text>

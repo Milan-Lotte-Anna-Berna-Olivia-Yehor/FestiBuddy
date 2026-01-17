@@ -1,5 +1,6 @@
 import { router } from 'expo-router';
 import { createUserWithEmailAndPassword, getAuth, updateProfile } from 'firebase/auth';
+import { doc, setDoc } from "firebase/firestore";
 import React, { useState } from 'react';
 import {
   ActivityIndicator,
@@ -12,7 +13,6 @@ import {
   View,
 } from 'react-native';
 import app from '../../firebase/firebaseConfig';
-import { doc, setDoc } from "firebase/firestore";
 // import { auth } from "@/lib/firebase";
 import { db } from '../../firebase/firebaseConfig';
 
@@ -54,6 +54,7 @@ export default function Register() {
 
       setLoading(false);
 
+      router.replace('/login')
       // 3️⃣ Show alert and navigate to login
       Alert.alert(
         'Success',
@@ -61,7 +62,7 @@ export default function Register() {
         [
           {
             text: 'OK',
-            onPress: () => router.replace('./index'), // Go to login screen
+            onPress: () => router.replace('/login'), // Go to login screen
           },
         ]
       );
@@ -108,7 +109,7 @@ export default function Register() {
 
       <View style={styles.register}>
         <Text style={styles.link}>Already have an account? </Text>
-        <Pressable onPress={() => router.replace('./index')}>
+        <Pressable onPress={() => router.replace('/login')}>
           <Text style={[styles.link, { color: 'teal' }]}>Login</Text>
         </Pressable>
       </View>

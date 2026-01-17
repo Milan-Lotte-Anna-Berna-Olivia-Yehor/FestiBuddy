@@ -58,17 +58,7 @@ export default function PairBracelet() {
 
   return (
     <>
-      <Stack.Screen
-        options={{
-          title: 'Pair Bracelet',
-          headerBackTitle: 'Profile',
-          headerStyle: { backgroundColor: '#000' },
-          headerTintColor: '#fff',
-          headerTitleStyle: { color: '#fff' },
-          headerShadowVisible: false,
-          headerLeft: () => null,
-        }}
-      />
+      <Stack.Screen options={{ headerShown: true, title: '', headerStyle: { backgroundColor: '#000' }, headerTintColor: '#fff', headerTitleStyle: { color: '#fff' }, headerShadowVisible: false}} />
       <View style={styles.container}>
         <Text style={styles.title}>Pair Bracelet</Text>
         <Text style={styles.description}>

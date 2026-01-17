@@ -6,13 +6,13 @@ export default function Profile() {
 
   return (
     <>
-      <Stack.Screen options={{ title: '', headerStyle: { backgroundColor: '#000' }, headerTintColor: '#fff', headerTitleStyle: { color: '#fff' }, headerShadowVisible: false, headerLeft: () => null }} />
+      <Stack.Screen options={{ headerShown: true, title: '', headerStyle: { backgroundColor: '#000' }, headerTintColor: '#fff', headerTitleStyle: { color: '#fff' }, headerShadowVisible: false}} />
       <View style={styles.container}>
       <Text style={styles.title}>Profile</Text>
 
       <View style={styles.profileSection}>
         <View style={styles.photoPlaceholder}></View>
-        <Text style={styles.nameText}>username</Text>
+
         <View style={styles.visitorBadge}>
           <Text style={styles.visitorText}>Visitor</Text>
         </View>
@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
     height: 60,
     backgroundColor: '#99f1ff',
     borderRadius: 10,
-    marginBottom: 5,
+    marginBottom: 20,
   },
   nameText: {
     fontSize: 16,

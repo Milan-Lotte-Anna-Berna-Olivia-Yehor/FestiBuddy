@@ -6,7 +6,7 @@ export default function Transactions() {
 
   return (
     <>
-      <Stack.Screen options={{ title: 'Transactions', headerBackTitle: 'Wallet', headerStyle: { backgroundColor: '#000' }, headerTintColor: '#fff', headerTitleStyle: { color: '#fff' }, headerShadowVisible: false, headerLeft: () => null }} />
+      <Stack.Screen options={{ headerShown: true, title: '', headerStyle: { backgroundColor: '#000' }, headerTintColor: '#fff', headerTitleStyle: { color: '#fff' }, headerShadowVisible: false}} />
       <View style={styles.container}>
         <Text style={styles.title}>Transaction History</Text>
 

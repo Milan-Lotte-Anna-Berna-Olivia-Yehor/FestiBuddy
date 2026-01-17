@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
-import { SafeAreaView, ScrollView, Text, View, StyleSheet, Image, TouchableOpacity } from "react-native";
-import { auth, db } from "@/firebase/firebaseConfig";
-import { doc, getDoc, onSnapshot, setDoc } from "firebase/firestore";
-import { Events } from "@/constants/eventList";
 import { Artists } from "@/constants/artistList";
+import { Events } from "@/constants/eventList";
+import { auth, db } from "@/firebase/firebaseConfig";
 import { onAuthStateChanged } from "firebase/auth";
+import { doc, onSnapshot, setDoc } from "firebase/firestore";
+import React, { useEffect, useState } from "react";
+import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 export default function PersonalTimetable() {
     const [likedArtists, setLikedArtists] = useState<number[] | null>(null);
@@ -98,7 +98,7 @@ export default function PersonalTimetable() {
                         {ar.start_time} {"\n"} {ar.end_time}
                         </Text>
                         <Image
-                        source={require("@/assets/images/widebinkydog.png")}
+                        source={require("@/assets/images/artist.png")}
                         style={styles.avatar}
                         />
                         <Text style={styles.artist}>{artist.name}</Text>
