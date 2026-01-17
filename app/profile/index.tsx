@@ -12,7 +12,7 @@ export default function Profile() {
 
       <View style={styles.profileSection}>
         <View style={styles.photoPlaceholder}></View>
-        <Text style={styles.nameText}>username</Text>
+
         <View style={styles.visitorBadge}>
           <Text style={styles.visitorText}>Visitor</Text>
         </View>
@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
     height: 60,
     backgroundColor: '#99f1ff',
     borderRadius: 10,
-    marginBottom: 5,
+    marginBottom: 20,
   },
   nameText: {
     fontSize: 16,

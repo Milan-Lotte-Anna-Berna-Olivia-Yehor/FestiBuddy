@@ -1,18 +1,18 @@
 import { Artists } from "@/constants/artistList";
 import { Events } from "@/constants/eventList";
+import { auth, db } from "@/firebase/firebaseConfig";
 import { useSearchParams } from "expo-router/build/hooks";
-import React, { useState } from "react";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import React from "react";
 import {
   Image,
   SafeAreaView,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
-import { ScrollView } from "react-native";
-import { auth, db } from "@/firebase/firebaseConfig";
-import { doc, getDoc, setDoc } from "firebase/firestore";
 
 
 export default function LineupScreen() {
@@ -76,7 +76,7 @@ export default function LineupScreen() {
                 {ar.start_time} {"\n"} {ar.end_time}
               </Text>
               <Image
-                source={require("@/assets/images/widebinkydog.png")}
+                source={require("@/assets/images/artist.png")}
                 style={styles.avatar}
               />
               <Text style={styles.artist}>{artist.name}</Text>
