@@ -1,117 +1,51 @@
-import { Stack, useRouter } from 'expo-router';
-import { useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Ionicons } from "@expo/vector-icons";
+import React from "react";
+import { FlatList, StyleSheet, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { ScreenHeader } from "../../components/ScreenHeader";
 
-export default function Notifications() {
-  const router = useRouter();
-  const [read1, setRead1] = useState(false);
-  const [read2, setRead2] = useState(false);
-  const [read3, setRead3] = useState(false);
+const notifs = [
+  { id: '1', title: 'Main Stage Alert', msg: 'Neon Lights starting in 15 mins!', time: '10m ago', icon: 'musical-notes' },
+  { id: '2', title: 'Safety Warning', msg: 'Stay hydrated! Free water at Bar A.', time: '2h ago', icon: 'water' },
+];
 
+export default function NotificationsScreen() {
   return (
-    <>
-      <Stack.Screen options={{ headerShown: true, title: '', headerStyle: { backgroundColor: '#000' }, headerTintColor: '#fff', headerTitleStyle: { color: '#fff' }, headerShadowVisible: false}} />
-      <View style={styles.container}>
-      {/* Page title */}
-      <Text style={styles.title}>Notifications</Text>
+    <SafeAreaView style={styles.container} edges={['top']}>
+      <ScreenHeader title="Notifications" rightIcon="checkmark-done-outline" />
 
-      <View style={styles.thinLine} />
-
-      <View style={styles.headerRow}>
-        <Text style={styles.unreadText}>3 unread notifications</Text>
-        <TouchableOpacity onPress={() => { setRead1(true); setRead2(true); setRead3(true); }}>
-          <Text style={styles.markReadText}>mark all as read</Text>
-        </TouchableOpacity>
-      </View>
-
-      <View style={styles.thinLine} />
-
-      <View style={[styles.notificationContainer, { backgroundColor: read1 ? '#000' : '#333' }]}>
-        <TouchableOpacity onPress={() => setRead1(true)}>
-          <Text style={styles.notificationTitle}>Artist reminder</Text>
-          <Text style={styles.notificationDesc}>Coldplay performs in 15 minutes at main stage!</Text>
-          <Text style={styles.timeAgo}>5 min ago</Text>
-        </TouchableOpacity>
-         <View style={styles.thinLine} />
-      </View>
-
-      <View style={[styles.notificationContainer, { backgroundColor: read2 ? '#000' : '#333' }]}>
-        <TouchableOpacity onPress={() => setRead2(true)}>
-          <Text style={styles.notificationTitle}>Friend request</Text>
-          <Text style={styles.notificationDesc}>berna123 sent you a friend request!</Text>
-          <Text style={styles.timeAgo}>10 min ago</Text>
-        </TouchableOpacity>
-        <View style={styles.thinLine} />
-      </View>
-
-      <View style={[styles.notificationContainer, { backgroundColor: read3 ? '#000' : '#333' }]}>
-        <TouchableOpacity onPress={() => setRead3(true)}>
-          <Text style={styles.notificationTitle}>Schedule change</Text>
-          <Text style={styles.notificationDesc}>One Direction performance time updated to: 19:00!</Text>
-          <Text style={styles.timeAgo}>15 min ago</Text>
-        </TouchableOpacity>
-        <View style={styles.thinLine} />
-      </View>
-
-    </View>
-    </>
+      <FlatList 
+        data={notifs}
+        keyExtractor={i => i.id}
+        contentContainerStyle={{padding: 20}}
+        renderItem={({item}) => (
+            <View style={styles.card}>
+                <View style={styles.iconBox}>
+                    {/* @ts-ignore */}
+                    <Ionicons name={item.icon} size={24} color="#000" />
+                </View>
+                <View style={{flex: 1}}>
+                    <Text style={styles.title}>{item.title}</Text>
+                    <Text style={styles.msg}>{item.msg}</Text>
+                    <Text style={styles.time}>{item.time}</Text>
+                </View>
+            </View>
+        )}
+      />
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingTop: 50,
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    backgroundColor: '#000',
+  container: { flex: 1, backgroundColor: "#000" },
+  card: {
+    flexDirection: 'row', backgroundColor: '#1A1A1A', padding: 16, borderRadius: 16, marginBottom: 12
   },
-  title: {
-    fontSize: 28,
-    fontWeight: '600',
-    marginBottom: 10,
-    color: '#fff',
+  iconBox: {
+    width: 40, height: 40, borderRadius: 20, backgroundColor: '#7CFF00',
+    justifyContent: 'center', alignItems: 'center', marginRight: 16
   },
-  thinLine: {
-    height: 1,
-    backgroundColor: '#fff',
-    width: '100%',
-    marginVertical: 5,
-  },
-  headerRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '100%',
-    marginVertical: 10,
-  },
-  unreadText: {
-    color: '#fff',
-    fontSize: 16,
-  },
-  markReadText: {
-    color: '#b0ff4b',
-    fontSize: 16,
-  },
-  notificationContainer: {
-    width: '100%',
-    alignItems: 'flex-start',
-    padding: 10,
-  },
-  notificationTitle: {
-    color: '#b0ff4b',
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginVertical: 5,
-  },
-  notificationDesc: {
-    color: '#fff',
-    fontSize: 16,
-    marginBottom: 5,
-  },
-  timeAgo: {
-    color: '#fff',
-    fontSize: 12,
-    marginTop: 20,
-    marginBottom: 5,
-  },
+  title: { color: '#FFF', fontWeight: 'bold', fontSize: 16, marginBottom: 4 },
+  msg: { color: '#CCC', fontSize: 14, marginBottom: 8 },
+  time: { color: '#666', fontSize: 12 }
 });

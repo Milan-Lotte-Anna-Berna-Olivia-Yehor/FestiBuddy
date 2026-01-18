@@ -1,80 +1,89 @@
-export const Events = [
-    {
-        id: 0,
-        title: "Dreamwave",
-        date: new Date("2026-07-15"),
-        place: "Leiden, Van der Werfpark, Van der Werfstraat 5, 2311 DA Leiden, Netherlands",
-        picture: require("@/assets/images/event_dreamwave.png"),
-        description: "Dreamwave celebrates the melancholic and ethereal side of 90s alternative rock. Nostalgic melodies and iconic voices await fans.",
-        artists: [
-            { id: 0, start_time: "20:00", end_time: "21:15" }, // Mazzy Star
-            { id: 1, start_time: "18:30", end_time: "19:45" }, // The Cranberries
-            { id: 2, start_time: "17:00", end_time: "18:15" }, // Jeff Buckley
-            { id: 3, start_time: "15:30", end_time: "16:45" }, // The Smiths
-            { id: 4, start_time: "14:00", end_time: "15:15" }, // R.E.M.
-        ]
-    },
-    {
-        id: 1,
-        title: "Britrock Legends",
-        date: new Date("2026-08-01"),
-        place: "Amsterdam, Westerpark, Westerstraat 123, 1015 MA Amsterdam, Netherlands",
-        picture: require("@/assets/images/event_britrock.png"),
-        description: "A tribute to the golden era of Britpop and alternative rock, with big riffs, singalong choruses, and festival nostalgia.",
-        artists: [
-            { id: 5, start_time: "21:00", end_time: "22:15" },  // Radiohead
-            { id: 6, start_time: "19:30", end_time: "20:45" },  // Oasis
-            { id: 7, start_time: "18:00", end_time: "19:15" },  // Green Day
-            { id: 8, start_time: "16:30", end_time: "17:45" },  // The Strokes
-            { id: 9, start_time: "15:00", end_time: "16:15" },  // Weezer
-            { id: 10, start_time: "13:30", end_time: "14:30" }  // Blur
-        ]
-    },
-    {
-        id: 2,
-        title: "Istanbul Vibes Festival",
-        date: new Date("2026-09-12"),
-        place: "Rotterdam, Kralingse Bos, Kralingse Plaslaan 11, 3062 EE Rotterdam, Netherlands",
-        picture: require("@/assets/images/event_istanbulwaves.png"),
-        description: "Bringing Istanbul’s indie and alternative scene to the Netherlands. Discover modern Turkish bands and eclectic sounds from east to west.",
-        artists: [
-            { id: 11, start_time: "20:00", end_time: "21:15" }, // Mor ve Ötesi
-            { id: 12, start_time: "18:30", end_time: "19:45" }, // Vega
-            { id: 13, start_time: "17:00", end_time: "18:15" }, // Büyük Ev Ablukada
-            { id: 14, start_time: "15:30", end_time: "16:45" }, // Sakin
-            { id: 15, start_time: "14:00", end_time: "15:15" }, // Adamlar
-        ]
-    },
-    {
-        id: 3,
-        title: "Grunge & Alt Rock Festival",
-        date: new Date("2026-08-20"),
-        place: "Eindhoven, Stadswandelpark, Parklaan 21, 5611 EA Eindhoven, Netherlands",
-        picture: require("@/assets/images/event_grunge.png"),
-        description: "Celebrate the raw power of 90s and 2000s rock. From grunge to alternative to nu-metal, this festival is made for headbanging and heavy guitars.",
-        artists: [
-            { id: 17, start_time: "21:00", end_time: "22:15" }, // Linkin Park
-            { id: 18, start_time: "19:30", end_time: "20:45" }, // Nirvana
-            { id: 19, start_time: "18:00", end_time: "19:15" }, // Red Hot Chili Peppers
-            { id: 20, start_time: "16:30", end_time: "17:45" }, // Pearl Jam
-            { id: 21, start_time: "15:00", end_time: "16:15" }, // Soundgarden
-            { id: 22, start_time: "22:30", end_time: "23:15" }  // Foo Fighters
-        ]
-    },
-    {
-        id: 4,
-        title: "Modern Indie & Soul Festival",
-        date: new Date("2026-07-05"),
-        place: "The Hague, Zuiderpark, Zuiderparkweg 60, 2565 LA Den Haag, Netherlands",
-        picture: require("@/assets/images/event_modernindie.jpg"),
-        description: "Blending soul, indie, and modern alternative rock. Atmospheric performances, rising stars, and big indie names from around the world.",
-        artists: [
-            { id: 23, start_time: "20:00", end_time: "21:15" }, // Tamino
-            { id: 24, start_time: "18:30", end_time: "19:45" }, // Sade
-            { id: 25, start_time: "17:00", end_time: "18:15" }, // Palace
-            { id: 26, start_time: "15:30", end_time: "16:45" }, // Arctic Monkeys
-            { id: 27, start_time: "14:00", end_time: "15:15" }, // Florence + The Machine
-            { id: 28, start_time: "21:30", end_time: "22:30" }  // Tame Impala
-        ]
-    }
+import { ImageSourcePropType } from "react-native";
+
+export interface Performance {
+  id: number;
+  artistName: string;
+  time: string;
+  stage: string;
+  day: string; // Pridaný deň pre lepšie triedenie
+}
+
+export interface EventInfo {
+  label: string;
+  value: string;
+  icon: string; 
+}
+
+export interface Event {
+  id: number;
+  title: string;
+  status: "live" | "upcoming" | "past"; // Status eventu
+  date: string;
+  location: string;
+  image: ImageSourcePropType;
+  description: string;
+  stages: string[];
+  performances: Performance[];
+  usefulInfo: EventInfo[];
+}
+
+export const eventList: Event[] = [
+  {
+    id: 1,
+    title: "Dreamwave",
+    status: "live",
+    date: "14. - 16. Aug",
+    location: "Budapest, Hungary",
+    image: require("../assets/images/event_dreamwave.png"), 
+    description: "Welcome to Dreamwave, the ultimate electronic music experience in Central Europe! Spanning 3 days on an island in the Danube, this festival brings together top-tier techno, house, and trance artists. Enjoy the massive light shows, chill zones, and the unique energy of thousands of connected souls.",
+    stages: ["Main Stage", "Techno Dome", "Riverside Deck"],
+    usefulInfo: [
+      { label: "Age", value: "18+", icon: "person-add" },
+      { label: "Gate", value: "K-Bridge", icon: "enter" },
+      { label: "Weather", value: "24°C Night", icon: "sunny" },
+      { label: "Camping", value: "Zone C", icon: "camp" }, // camp icon might need mapping or custom
+    ],
+    performances: [
+        { id: 101, artistName: "Neon Lights", time: "20:00 - 21:30", stage: "Main Stage", day: "Friday" },
+        { id: 102, artistName: "Synth Punks", time: "22:00 - 23:30", stage: "Main Stage", day: "Friday" },
+        { id: 201, artistName: "Dark Matter", time: "21:00 - 22:30", stage: "Techno Dome", day: "Friday" },
+        { id: 301, artistName: "Sunset Vibes", time: "19:00 - 20:30", stage: "Riverside Deck", day: "Friday" },
+        { id: 103, artistName: "Galactic Bass", time: "00:00 - 02:00", stage: "Main Stage", day: "Saturday" },
+    ]
+  },
+  {
+    id: 2,
+    title: "Istanbul Waves",
+    status: "upcoming",
+    date: "20. - 22. Sep",
+    location: "Istanbul, Turkey",
+    image: require("../assets/images/event_istanbulwaves.png"),
+    description: "Experience the magic where East meets West. Istanbul Waves offers a unique blend of modern electronic beats and traditional oriental instruments, set against the backdrop of the Bosphorus. Don't miss the ferry boat parties!",
+    stages: ["Bosphorus Stage", "Grand Bazaar Tent"],
+    usefulInfo: [
+       { label: "Age", value: "16+", icon: "person-add" },
+       { label: "Transport", value: "Ferry Only", icon: "boat" }
+    ],
+    performances: [
+        { id: 401, artistName: "Bosphorus Beats", time: "19:00 - 21:00", stage: "Bosphorus Stage", day: "Saturday" },
+        { id: 402, artistName: "Sultan's Groove", time: "22:00 - 00:00", stage: "Grand Bazaar Tent", day: "Saturday" }
+    ]
+  },
+  {
+    id: 3,
+    title: "Brit Rock",
+    status: "upcoming",
+    date: "05. - 07. Oct",
+    location: "London, UK",
+    image: require("../assets/images/event_britrock.png"),
+    description: "Raw energy, loud guitars, and London rain. Brit Rock brings the best of indie and alternative rock to Wembley Park. Put on your boots and get ready to mosh.",
+    stages: ["Wembley Arena", "Underground Club"],
+    usefulInfo: [
+        { label: "Entry", value: "Gate 4", icon: "ticket" }
+    ],
+    performances: [
+        { id: 501, artistName: "The Guitars", time: "20:00 - 22:00", stage: "Wembley Arena", day: "Sunday" },
+        { id: 502, artistName: "Garage Boys", time: "18:00 - 19:30", stage: "Underground Club", day: "Sunday" }
+    ]
+  }
 ];

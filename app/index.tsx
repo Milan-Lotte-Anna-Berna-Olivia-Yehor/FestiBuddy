@@ -14,20 +14,20 @@ export default function WelcomeScreen() {
   const router = useRouter();
 
   const selectRole = async (role: "visitor" | "organizer") => {
-  await AsyncStorage.setItem("userRole", role);
+    await AsyncStorage.setItem("userRole", role);
 
-  if (role === "visitor") {
-    router.replace("/(auth)/login"); // visitor login
-  } else if (role === "organizer") {
-    router.replace("/(auth-organizer)/login"); // organizer login
-  }
-};
-
+    if (role === "visitor") {
+      // PUSH namiesto REPLACE, aby fungovala šípka späť
+      router.push("/(auth)/login"); 
+    } else if (role === "organizer") {
+      router.push("/(auth-organizer)/login");
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
-        <Text style={styles.title}>Welcome to festibuddy</Text>
+        <Text style={styles.title}>Welcome to FestiBuddy</Text>
         <Text style={styles.subtitle}>
           Choose how you want to continue
         </Text>
@@ -92,6 +92,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     alignItems: "center",
     marginBottom: 24,
+    borderWidth: 1,
+    borderColor: "#333", // Jemný border pre lepší 'tech' vzhľad
   },
   cardTitle: {
     fontSize: 20,

@@ -1,69 +1,96 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Stack } from "expo-router";
+import { Stack, useRouter, useSegments } from "expo-router";
+import { onAuthStateChanged, User } from "firebase/auth";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, View } from "react-native";
+import { ActivityIndicator, StatusBar, View } from "react-native";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import { auth } from "../firebase/firebaseConfig";
 
 export default function RootLayout() {
-  const [loading, setLoading] = useState(true);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [hasRole, setHasRole] = useState(false);
+  const [initializing, setInitializing] = useState(true);
+  const [user, setUser] = useState<User | null>(null);
+  const router = useRouter();
+  const segments = useSegments();
 
-  // Role-aware state: "visitor" | "organizer" | null
-  const [userRole, setUserRole] = useState<"visitor" | "organizer" | null>(null);
-
+  // 1. SLEDOVANIE STAVU PRIHLÁSENIA
   useEffect(() => {
-    const init = async () => {
-      try {
-        const token = await AsyncStorage.getItem("token");
-        const role = await AsyncStorage.getItem("userRole"); // "visitor" or "organizer"
+    const subscriber = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      if (initializing) setInitializing(false);
+    });
+    return subscriber; // Odhlásenie listenera pri unmount
+  }, []);
 
-        setIsLoggedIn(!!token);
-        setUserRole(role as "visitor" | "organizer" | null);
-        setHasRole(!!role);
-      } catch (error) {
-        console.error("Error reading AsyncStorage:", error);
-        setIsLoggedIn(false);
-        setHasRole(false);
-        setUserRole(null);
-      } finally {
-        setLoading(false);
+  // 2. LOGIKA PRESMEROVANIA (OCHRANKÁR)
+  useEffect(() => {
+    if (initializing) return; // Kým nevieme, kto si, nerobíme nič
+
+    const inAuthGroup = segments[0] === "(auth)" || segments[0] === "(auth-organizer)";
+    const inTabsGroup = segments[0] === "(tabs)" || segments[0] === "(tabs-organizer)";
+    const atWelcome = segments.length === 0 || segments[0] === "index";
+
+    const checkRedirect = async () => {
+      // A. POUŽÍVATEĽ NIE JE PRIHLÁSENÝ
+      if (!user) {
+        // Ak sa snaží dostať dovnútra appky (tabs), vykopneme ho na začiatok
+        if (inTabsGroup) {
+          router.replace("/");
+        }
+        // Ak je na Welcome alebo v Auth, necháme ho tam
+      } 
+      
+      // B. POUŽÍVATEĽ JE PRIHLÁSENÝ
+      else {
+        // Zistíme rolu (či je organizátor alebo user)
+        const role = await AsyncStorage.getItem("userRole");
+
+        // Ak je na Login obrazovke alebo na Welcome, presmerujeme ho dnu
+        if (inAuthGroup || atWelcome) {
+          if (role === 'organizer') {
+            router.replace("/(tabs-organizer)/home");
+          } else {
+            router.replace("/(tabs)/Home");
+          }
+        }
       }
     };
 
-    init();
-  }, []);
+    checkRedirect();
+  }, [user, initializing, segments]);
 
-  if (loading) {
+  // 3. LOADING OBRAZOVKA (Kým Firebase zisťuje status)
+  if (initializing) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" />
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: '#000' }}>
+        <ActivityIndicator size="large" color="#7CFF00" />
       </View>
     );
   }
 
   return (
-    <Stack screenOptions={{ headerShown: false }}>
-      {/* No role set yet → show welcome screen */}
-      {!hasRole && <Stack.Screen name="index" />}
-
-      {/* Role set but not logged in → show role-specific auth */}
-      {hasRole && !isLoggedIn && (
-        <Stack.Screen
-          name={userRole === "organizer" ? "(auth-organizer)" : "(auth)"}
+    <SafeAreaProvider>
+      <StatusBar barStyle="light-content" />
+      <Stack screenOptions={{ 
+        headerShown: false,
+        contentStyle: { backgroundColor: '#000' },
+        animation: 'fade',
+      }}>
+        <Stack.Screen name="index" />
+        <Stack.Screen name="(auth)" />
+        <Stack.Screen name="(auth-organizer)" />
+        <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="(tabs-organizer)" />
+        
+        {/* Modals */}
+        <Stack.Screen 
+          name="modalEvent" 
+          options={{ presentation: 'modal', headerShown: false }}
         />
-      )}
-
-      {/* Role set and logged in → show role-specific tabs */}
-      {hasRole && isLoggedIn && (
-        <Stack.Screen
-          name={userRole === "organizer" ? "(tabs-organizer)" : "(tabs)"}
+        <Stack.Screen 
+          name="modalSchedule" 
+          options={{ presentation: 'modal', headerShown: false }}
         />
-      )}
-
-      <Stack.Screen name="modalEvent" options={{headerShown: true, title: "", headerStyle: { backgroundColor: '#000' }, headerTintColor: "#ffffff"}}/>
-      <Stack.Screen name="modalSchedule" options={{headerShown: true, title: "", headerStyle: { backgroundColor: '#000' }, headerTintColor: "#ffffff"}}/>
-    </Stack>
+      </Stack>
+    </SafeAreaProvider>
   );
 }
-
-

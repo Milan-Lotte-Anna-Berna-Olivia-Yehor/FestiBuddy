@@ -1,103 +1,94 @@
-import { Stack, useRouter } from 'expo-router';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Ionicons } from "@expo/vector-icons";
+import React, { useState } from "react";
+import { ScrollView, StyleSheet, Switch, Text, TouchableOpacity, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { ScreenHeader } from "../../components/ScreenHeader";
 
-export default function Privacy() {
-  const router = useRouter();
+export default function PrivacyScreen() {
+  const [profileVisible, setProfileVisible] = useState(true);
+  const [showLocation, setShowLocation] = useState(true);
+  const [allowTags, setAllowTags] = useState(false);
+
+  const SettingRow = ({ label, value, onValueChange, desc }: any) => (
+    <View style={styles.row}>
+       <View style={{flex: 1}}>
+          <Text style={styles.label}>{label}</Text>
+          <Text style={styles.desc}>{desc}</Text>
+       </View>
+       <Switch 
+          value={value} 
+          onValueChange={onValueChange}
+          trackColor={{ false: "#333", true: "#7CFF00" }}
+       />
+    </View>
+  );
 
   return (
-    <>
-      <Stack.Screen 
-        options={{ 
-          title: 'Privacy', 
-          headerBackTitle: 'Settings', 
-          headerStyle: { backgroundColor: '#000' }, 
-          headerTintColor: '#fff', 
-          headerTitleStyle: { color: '#fff' }, 
-          headerShadowVisible: false 
-        }} 
-      />
-      <ScrollView style={styles.container}>
-        <View style={styles.content}>
-          <Text style={styles.sectionTitle}>Privacy Policy</Text>
-          <Text style={styles.text}>
-            At FestiBuddy, we take your privacy seriously. This policy explains how we collect, use, and protect your information when you use our festival app.
-          </Text>
+    <SafeAreaView style={styles.container} edges={['top']}>
+      <ScreenHeader title="Privacy & Security" rightIcon="shield-checkmark-outline" />
 
-          <Text style={styles.subtitle}>Information We Collect</Text>
-          <Text style={styles.text}>
-            • Profile information (name, email, profile picture){'\n'}
-            • Festival preferences and interests{'\n'}
-            • Location data (only when you share your location with friends){'\n'}
-            • Event schedules and favorites{'\n'}
-            • Social connections and friend lists
-          </Text>
-
-          <Text style={styles.subtitle}>How We Use Your Information</Text>
-          <Text style={styles.text}>
-            • To personalize your festival experience{'\n'}
-            • To help you connect with friends at the festival{'\n'}
-            • To provide location-based features (with your consent){'\n'}
-            • To send you important festival updates and notifications{'\n'}
-            • To improve our app and services
-          </Text>
-
-          <Text style={styles.subtitle}>Data Security</Text>
-          <Text style={styles.text}>
-            We use industry-standard security measures to protect your personal information. Your data is encrypted and stored securely.
-          </Text>
-
-          <Text style={styles.subtitle}>Location Sharing</Text>
-          <Text style={styles.text}>
-            Location sharing is completely optional. You control who can see your location and can disable it at any time in your settings.
-          </Text>
-
-          <Text style={styles.subtitle}>Your Rights</Text>
-          <Text style={styles.text}>
-            You have the right to access, modify, or delete your personal information at any time through your account settings.
-          </Text>
-
-          <Text style={styles.footerText}>
-            Last updated: {new Date().toLocaleDateString()}
-          </Text>
+      <ScrollView contentContainerStyle={styles.content}>
+        <Text style={styles.sectionTitle}>Visibility</Text>
+        <View style={styles.card}>
+            <SettingRow 
+               label="Public Profile" 
+               desc="Allow others to find you by name"
+               value={profileVisible}
+               onValueChange={setProfileVisible}
+            />
+            <View style={styles.divider} />
+            <SettingRow 
+               label="Share Live Location" 
+               desc="Visible to added friends only"
+               value={showLocation}
+               onValueChange={setShowLocation}
+            />
+             <View style={styles.divider} />
+            <SettingRow 
+               label="Photo Tagging" 
+               desc="Allow friends to tag you in photos"
+               value={allowTags}
+               onValueChange={setAllowTags}
+            />
         </View>
+
+        <Text style={styles.sectionTitle}>Data & Documents</Text>
+        <View style={styles.card}>
+            <TouchableOpacity style={styles.linkRow}>
+                <Text style={styles.linkText}>Terms of Service</Text>
+                <Ionicons name="chevron-forward" size={20} color="#666" />
+            </TouchableOpacity>
+            <View style={styles.divider} />
+            <TouchableOpacity style={styles.linkRow}>
+                <Text style={styles.linkText}>Privacy Policy</Text>
+                <Ionicons name="chevron-forward" size={20} color="#666" />
+            </TouchableOpacity>
+             <View style={styles.divider} />
+            <TouchableOpacity style={styles.linkRow}>
+                <Text style={styles.linkText}>Export My Data</Text>
+                <Ionicons name="download-outline" size={20} color="#7CFF00" />
+            </TouchableOpacity>
+        </View>
+        
+        <TouchableOpacity style={styles.deleteButton}>
+             <Text style={styles.deleteText}>Delete Account</Text>
+        </TouchableOpacity>
       </ScrollView>
-    </>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#000',
-  },
-  content: {
-    padding: 20,
-    paddingTop: 30,
-  },
-  sectionTitle: {
-    fontSize: 28,
-    fontWeight: '600',
-    marginBottom: 20,
-    color: '#fff',
-  },
-  subtitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    marginTop: 24,
-    marginBottom: 12,
-    color: '#fff',
-  },
-  text: {
-    fontSize: 16,
-    lineHeight: 24,
-    color: '#e0e0e0',
-    marginBottom: 16,
-  },
-  footerText: {
-    fontSize: 14,
-    color: '#888',
-    marginTop: 30,
-    marginBottom: 20,
-    textAlign: 'center',
-  },
+  container: { flex: 1, backgroundColor: "#000" },
+  content: { padding: 20 },
+  sectionTitle: { color: '#7CFF00', fontSize: 12, fontWeight: 'bold', textTransform: 'uppercase', marginBottom: 10, marginLeft: 10 },
+  card: { backgroundColor: '#1A1A1A', borderRadius: 16, marginBottom: 24, borderWidth: 1, borderColor: '#333' },
+  row: { flexDirection: 'row', alignItems: 'center', padding: 16 },
+  label: { color: '#FFF', fontSize: 16, fontWeight: '600' },
+  desc: { color: '#888', fontSize: 12, marginTop: 4 },
+  divider: { height: 1, backgroundColor: '#222', marginHorizontal: 16 },
+  linkRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16 },
+  linkText: { color: '#FFF', fontSize: 16 },
+  deleteButton: { alignItems: 'center', marginTop: 20 },
+  deleteText: { color: '#FF3B30', fontSize: 14, fontWeight: 'bold' }
 });

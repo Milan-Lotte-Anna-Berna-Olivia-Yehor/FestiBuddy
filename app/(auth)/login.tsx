@@ -1,190 +1,209 @@
-import { router } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
-import { useState } from 'react';
+import { Ionicons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useRouter } from "expo-router";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import React, { useState } from "react";
 import {
   ActivityIndicator,
   Alert,
   Image,
-  Pressable,
+  KeyboardAvoidingView,
+  Platform,
+  SafeAreaView,
   StyleSheet,
   Text,
   TextInput,
-  View,
   TouchableOpacity,
-} from 'react-native';
-import app from '../../firebase/firebaseConfig';
+  View,
+} from "react-native";
+import { auth } from "../../firebase/firebaseConfig";
 
-export default function Login() {
+export default function VisitorLoginScreen() {
+  const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
 
-  async function loginUser() {
+  const handleLogin = async () => {
+    if (!email || !password) {
+      Alert.alert("Error", "Please fill in all fields");
+      return;
+    }
     setLoading(true);
     try {
-      const auth = getAuth(app);
       await signInWithEmailAndPassword(auth, email, password);
-      setLoading(false);
-      router.replace('/(tabs)/Home'); // Navigate to home tabs after login
+      // Uloženie roly a tokenu
+      await AsyncStorage.setItem("token", "dummy-visitor-token");
+      await AsyncStorage.setItem("userRole", "visitor");
+      
+      router.replace("/(tabs)/Home");
     } catch (error: any) {
+      Alert.alert("Login Failed", error.message);
+    } finally {
       setLoading(false);
-      Alert.alert('Oops', error.message);
     }
-  }
+  };
 
   return (
-    <View style={styles.container}>
-      <StatusBar style="light" />
-      
-      {/* Back button - if needed */}
-      <TouchableOpacity 
-        style={styles.backButton}
-        onPress={() => router.back()}
+    <SafeAreaView style={styles.container}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={{ flex: 1 }}
       >
-        <Text style={styles.backArrow}>←</Text>
-      </TouchableOpacity>
-
-      <Image
-        source={require('../../assets/images/app_logo_home-removebg-preview.png')}
-        style={styles.logo}
-        resizeMode="contain"
-      />
-
-      <View style={styles.formContainer}>
-        <View style={styles.inputGroup}>
-          <Text style={styles.label}>E-mail</Text>
-          <TextInput
-            style={styles.input}
-            placeholder=""
-            placeholderTextColor="#666"
-            onChangeText={setEmail}
-            value={email}
-            autoCapitalize="none"
-            keyboardType="email-address"
-          />
-        </View>
-
-        <View style={styles.inputGroup}>
-          <Text style={styles.label}>Password</Text>
-          <TextInput
-            style={styles.input}
-            placeholder=""
-            placeholderTextColor="#666"
-            onChangeText={setPassword}
-            value={password}
-            secureTextEntry
-          />
-        </View>
-
-        <TouchableOpacity style={styles.forgotPassword}>
-          <Text style={styles.forgotPasswordText}>Forgot password?</Text>
-        </TouchableOpacity>
-
-        <Pressable 
-          style={[styles.button, loading && styles.buttonDisabled]} 
-          onPress={loginUser}
-          disabled={loading}
-        >
-          {loading ? (
-            <ActivityIndicator size="small" color="#1a1a1a" />
-          ) : (
-            <Text style={styles.buttonText}>Sign in</Text>
-          )}
-        </Pressable>
-
-        <View style={styles.register}>
-          <Text style={styles.registerText}>Don't have an account? </Text>
-          <TouchableOpacity onPress={() => router.push('/(auth)/register')}>
-            <Text style={styles.registerLink}>Create account</Text>
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+            <Ionicons name="arrow-back" size={24} color="#FFF" />
           </TouchableOpacity>
         </View>
-      </View>
-    </View>
+
+        <View style={styles.content}>
+          {/* LOGO */}
+          <View style={styles.logoContainer}>
+             <Image 
+                source={require("../../assets/images/app_logo-removebg-preview.png")}
+                style={styles.logo}
+                resizeMode="contain"
+             />
+          </View>
+          
+          <Text style={styles.title}>Visitor Access</Text>
+          <Text style={styles.subtitle}>Log in to sync your wristband</Text>
+
+          <View style={styles.form}>
+            <View style={styles.inputContainer}>
+              <Ionicons name="mail-outline" size={20} color="#666" style={styles.inputIcon} />
+              <TextInput
+                style={styles.input}
+                placeholder="Email Address"
+                placeholderTextColor="#666"
+                value={email}
+                onChangeText={setEmail}
+                autoCapitalize="none"
+                keyboardType="email-address"
+              />
+            </View>
+
+            <View style={styles.inputContainer}>
+              <Ionicons name="lock-closed-outline" size={20} color="#666" style={styles.inputIcon} />
+              <TextInput
+                style={styles.input}
+                placeholder="Password"
+                placeholderTextColor="#666"
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry
+              />
+            </View>
+
+            <TouchableOpacity 
+              style={styles.button} 
+              onPress={handleLogin}
+              disabled={loading}
+            >
+              {loading ? (
+                <ActivityIndicator color="#000" />
+              ) : (
+                <Text style={styles.buttonText}>Start Partying</Text>
+              )}
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={() => router.push("/(auth)/register")}>
+              <Text style={styles.linkText}>
+                Don't have an account? <Text style={styles.linkHighlight}>Register</Text>
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000',
-    justifyContent: 'center',
-    paddingHorizontal: 24,
+    backgroundColor: "#000",
+  },
+  header: {
+    paddingHorizontal: 20,
+    paddingTop: 10,
   },
   backButton: {
-    position: 'absolute',
-    top: 50,
-    left: 24,
-    zIndex: 1,
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#1A1A1A',
+    borderRadius: 20,
   },
-  backArrow: {
-    fontSize: 24,
-    color: '#fff',
+  content: {
+    flex: 1,
+    paddingHorizontal: 24,
+    justifyContent: "center",
+    paddingBottom: 80,
   },
-  logo: {
-    width: 120,
-    height: 120,
-    alignSelf: 'center',
-    marginBottom: 60,
-  },
-  formContainer: {
-    width: '100%',
-  },
-  inputGroup: {
+  logoContainer: {
+    alignItems: "center",
     marginBottom: 20,
   },
-  label: {
-    fontSize: 16,
-    color: '#fff',
-    marginBottom: 8,
-    fontWeight: '500',
+  logo: {
+    width: 200, // Prispôsob veľkosť loga
+    height: 80,
   },
-  input: {
-    width: '100%',
-    height: 50,
+  title: {
+    fontSize: 28,
+    fontWeight: "bold",
+    color: "#FFF",
+    textAlign: "center",
+    marginBottom: 8,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: "#888",
+    textAlign: "center",
+    marginBottom: 40,
+  },
+  form: {
+    gap: 16,
+  },
+  inputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#1A1A1A",
     borderRadius: 12,
     paddingHorizontal: 16,
-    backgroundColor: '#2e2e2e',
-    color: '#fff',
+    height: 56,
+    borderWidth: 1,
+    borderColor: "#333",
+  },
+  inputIcon: {
+    marginRight: 12,
+  },
+  input: {
+    flex: 1,
+    color: "#FFF",
     fontSize: 16,
   },
-  forgotPassword: {
-    alignSelf: 'flex-start',
-    marginBottom: 30,
-  },
-  forgotPasswordText: {
-    fontSize: 14,
-    color: '#b0ff4b',
-  },
   button: {
-    width: '100%',
-    height: 50,
-    backgroundColor: '#b0ff4b',
+    backgroundColor: "#7CFF00",
+    height: 56,
     borderRadius: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 30,
-  },
-  buttonDisabled: {
-    opacity: 0.6,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 8,
   },
   buttonText: {
-    color: '#1a1a1a',
-    fontSize: 18,
-    fontWeight: '600',
+    color: "#000",
+    fontSize: 16,
+    fontWeight: "bold",
   },
-  register: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+  linkText: {
+    color: "#888",
+    textAlign: "center",
+    marginTop: 16,
   },
-  registerText: {
-    fontSize: 15,
-    color: '#fff',
-  },
-  registerLink: {
-    fontSize: 15,
-    color: '#b0ff4b',
-    fontWeight: '500',
+  linkHighlight: {
+    color: "#7CFF00",
+    fontWeight: "bold",
   },
 });

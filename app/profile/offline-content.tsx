@@ -1,361 +1,68 @@
-import { Stack, useRouter } from 'expo-router';
-import { useState } from 'react';
-import { ActivityIndicator, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Ionicons } from "@expo/vector-icons";
+import React from "react";
+import { FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { ScreenHeader } from "../../components/ScreenHeader";
 
-interface OfflineItem {
-  id: string;
-  name: string;
-  size: string;
-  downloaded: boolean;
-  downloading: boolean;
-  progress?: number;
-}
+const offlinePackages = [
+  { id: '1', title: 'Festival Map 2026', size: '15 MB', status: 'Downloaded', icon: 'map' },
+  { id: '2', title: 'Lineup & Schedule', size: '2 MB', status: 'Downloaded', icon: 'calendar' },
+  { id: '3', title: 'Artist Bios & Photos', size: '45 MB', status: 'Not Downloaded', icon: 'people' },
+];
 
-export default function OfflineContent() {
-  const router = useRouter();
-  const [items, setItems] = useState<OfflineItem[]>([
-    { id: '1', name: 'Festival Map', size: '2.5 MB', downloaded: false, downloading: false },
-    { id: '2', name: 'Event Schedule', size: '1.2 MB', downloaded: true, downloading: false },
-    { id: '3', name: 'Artist Information', size: '3.8 MB', downloaded: false, downloading: false },
-    { id: '4', name: 'Venue Details', size: '0.8 MB', downloaded: true, downloading: false },
-    { id: '5', name: 'Emergency Contacts', size: '0.3 MB', downloaded: true, downloading: false },
-  ]);
-
-  const handleDownload = (id: string) => {
-    setItems(items.map(item => {
-      if (item.id === id) {
-        return { ...item, downloading: true, progress: 0 };
-      }
-      return item;
-    }));
-
-    // Simulate download progress
-    let progress = 0;
-    const interval = setInterval(() => {
-      progress += 10;
-      setItems(currentItems => currentItems.map(item => {
-        if (item.id === id) {
-          if (progress >= 100) {
-            clearInterval(interval);
-            return { ...item, downloading: false, downloaded: true, progress: 100 };
-          }
-          return { ...item, progress };
-        }
-        return item;
-      }));
-    }, 200);
-  };
-
-  const handleDelete = (id: string) => {
-    setItems(items.map(item => {
-      if (item.id === id) {
-        return { ...item, downloaded: false, progress: 0 };
-      }
-      return item;
-    }));
-  };
-
-  const handleDownloadAll = () => {
-    items.forEach(item => {
-      if (!item.downloaded && !item.downloading) {
-        handleDownload(item.id);
-      }
-    });
-  };
-
-  const handleDeleteAll = () => {
-    setItems(items.map(item => ({
-      ...item,
-      downloaded: false,
-      progress: 0,
-    })));
-  };
-
-  const downloadedCount = items.filter(item => item.downloaded).length;
-  const totalSize = items.reduce((sum, item) => {
-    const sizeNum = parseFloat(item.size);
-    return sum + sizeNum;
-  }, 0);
-
+export default function OfflineContentScreen() {
   return (
-    <>
-      <Stack.Screen 
-        options={{ 
-          title: 'Offline Content', 
-          headerBackTitle: 'Settings', 
-          headerStyle: { backgroundColor: '#000' }, 
-          headerTintColor: '#fff', 
-          headerTitleStyle: { color: '#fff' }, 
-          headerShadowVisible: false 
-        }} 
-      />
-      <ScrollView style={styles.container}>
-        <View style={styles.content}>
-          <Text style={styles.sectionTitle}>Offline Content</Text>
-          <Text style={styles.description}>
-            Download content to access it without an internet connection during the festival.
+    <SafeAreaView style={styles.container} edges={['top']}>
+      <ScreenHeader title="Offline Content" rightIcon="cloud-download-outline" />
+
+      <View style={styles.infoBox}>
+          <Ionicons name="information-circle" size={24} color="#7CFF00" />
+          <Text style={styles.infoText}>
+              Download content to access maps and schedules even when signal is lost.
           </Text>
+      </View>
 
-          <View style={styles.statsContainer}>
-            <View style={styles.statBox}>
-              <Text style={styles.statValue}>{downloadedCount}/{items.length}</Text>
-              <Text style={styles.statLabel}>Downloaded</Text>
-            </View>
-            <View style={styles.statBox}>
-              <Text style={styles.statValue}>{totalSize.toFixed(1)} MB</Text>
-              <Text style={styles.statLabel}>Total Size</Text>
-            </View>
-          </View>
-
-          <View style={styles.buttonRow}>
-            <TouchableOpacity 
-              style={[styles.actionButton, styles.downloadAllButton]}
-              onPress={handleDownloadAll}
-            >
-              <Text style={styles.actionButtonText}>Download All</Text>
-            </TouchableOpacity>
-            <TouchableOpacity 
-              style={[styles.actionButton, styles.deleteAllButton]}
-              onPress={handleDeleteAll}
-            >
-              <Text style={styles.actionButtonText}>Delete All</Text>
-            </TouchableOpacity>
-          </View>
-
-          <Text style={styles.listTitle}>Available Content</Text>
-
-          {items.map((item) => (
-            <View key={item.id} style={styles.itemCard}>
-              <View style={styles.itemHeader}>
-                <View style={styles.itemInfo}>
-                  <Text style={styles.itemName}>{item.name}</Text>
-                  <Text style={styles.itemSize}>{item.size}</Text>
+      <FlatList
+        data={offlinePackages}
+        keyExtractor={item => item.id}
+        contentContainerStyle={{ padding: 20 }}
+        renderItem={({ item }) => (
+            <View style={styles.card}>
+                <View style={styles.iconBox}>
+                     {/* @ts-ignore */}
+                    <Ionicons name={item.icon} size={24} color="#FFF" />
                 </View>
-                {item.downloaded && (
-                  <View style={styles.downloadedBadge}>
-                    <Text style={styles.downloadedBadgeText}>✓ Downloaded</Text>
-                  </View>
-                )}
-              </View>
-
-              {item.downloading && item.progress !== undefined && (
-                <View style={styles.progressContainer}>
-                  <View style={styles.progressBar}>
-                    <View style={[styles.progressFill, { width: `${item.progress}%` }]} />
-                  </View>
-                  <Text style={styles.progressText}>{item.progress}%</Text>
+                <View style={{flex: 1}}>
+                    <Text style={styles.title}>{item.title}</Text>
+                    <Text style={styles.size}>{item.size}</Text>
                 </View>
-              )}
-
-              <View style={styles.itemActions}>
-                {!item.downloaded && !item.downloading ? (
-                  <TouchableOpacity 
-                    style={[styles.itemButton, styles.downloadButton]}
-                    onPress={() => handleDownload(item.id)}
-                  >
-                    <Text style={styles.itemButtonText}>Download</Text>
-                  </TouchableOpacity>
-                ) : item.downloading ? (
-                  <View style={[styles.itemButton, styles.downloadingButton]}>
-                    <ActivityIndicator size="small" color="#fff" />
-                    <Text style={[styles.itemButtonText, { marginLeft: 8 }]}>Downloading...</Text>
-                  </View>
+                
+                {item.status === 'Downloaded' ? (
+                    <TouchableOpacity style={styles.downloadedBtn}>
+                         <Ionicons name="checkmark" size={20} color="#000" />
+                         <Text style={styles.btnText}>Ready</Text>
+                    </TouchableOpacity>
                 ) : (
-                  <TouchableOpacity 
-                    style={[styles.itemButton, styles.deleteButton]}
-                    onPress={() => handleDelete(item.id)}
-                  >
-                    <Text style={styles.itemButtonText}>Delete</Text>
-                  </TouchableOpacity>
+                    <TouchableOpacity style={styles.downloadBtn}>
+                         <Ionicons name="download" size={20} color="#000" />
+                    </TouchableOpacity>
                 )}
-              </View>
             </View>
-          ))}
-
-          <View style={styles.infoBox}>
-            <Text style={styles.infoTitle}>💡 Tips</Text>
-            <Text style={styles.infoText}>
-              • Download content before arriving at the festival{'\n'}
-              • Maps and schedules work best offline{'\n'}
-              • Delete content after the festival to free up space{'\n'}
-              • Keep your phone charged to access offline content
-            </Text>
-          </View>
-        </View>
-      </ScrollView>
-    </>
+        )}
+      />
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#000',
-  },
-  content: {
-    padding: 20,
-    paddingTop: 30,
-  },
-  sectionTitle: {
-    fontSize: 28,
-    fontWeight: '600',
-    marginBottom: 12,
-    color: '#fff',
-  },
-  description: {
-    fontSize: 16,
-    lineHeight: 22,
-    color: '#e0e0e0',
-    marginBottom: 24,
-  },
-  statsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 20,
-  },
-  statBox: {
-    flex: 1,
-    backgroundColor: '#2e2e2e',
-    padding: 16,
-    borderRadius: 8,
-    marginHorizontal: 5,
-    alignItems: 'center',
-  },
-  statValue: {
-    fontSize: 24,
-    fontWeight: '600',
-    color: '#fff',
-    marginBottom: 4,
-  },
-  statLabel: {
-    fontSize: 14,
-    color: '#888',
-  },
-  buttonRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 24,
-  },
-  actionButton: {
-    flex: 1,
-    padding: 14,
-    borderRadius: 8,
-    marginHorizontal: 5,
-    alignItems: 'center',
-  },
-  downloadAllButton: {
-    backgroundColor: '#4CAF50',
-  },
-  deleteAllButton: {
-    backgroundColor: '#f44336',
-  },
-  actionButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  listTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#fff',
-    marginBottom: 16,
-  },
-  itemCard: {
-    backgroundColor: '#2e2e2e',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
-  },
-  itemHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  itemInfo: {
-    flex: 1,
-  },
-  itemName: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#fff',
-    marginBottom: 4,
-  },
-  itemSize: {
-    fontSize: 14,
-    color: '#888',
-  },
-  downloadedBadge: {
-    backgroundColor: '#4CAF50',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 12,
-  },
-  downloadedBadgeText: {
-    color: '#fff',
-    fontSize: 12,
-    fontWeight: '600',
-  },
-  progressContainer: {
-    marginBottom: 12,
-  },
-  progressBar: {
-    height: 6,
-    backgroundColor: '#1a1a1a',
-    borderRadius: 3,
-    overflow: 'hidden',
-    marginBottom: 6,
-  },
-  progressFill: {
-    height: '100%',
-    backgroundColor: '#4CAF50',
-    borderRadius: 3,
-  },
-  progressText: {
-    fontSize: 12,
-    color: '#888',
-    textAlign: 'right',
-  },
-  itemActions: {
-    marginTop: 8,
-  },
-  itemButton: {
-    padding: 12,
-    borderRadius: 8,
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'center',
-  },
-  downloadButton: {
-    backgroundColor: '#4CAF50',
-  },
-  downloadingButton: {
-    backgroundColor: '#666',
-  },
-  deleteButton: {
-    backgroundColor: '#f44336',
-  },
-  itemButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  infoBox: {
-    backgroundColor: '#1a1a1a',
-    borderRadius: 12,
-    padding: 16,
-    marginTop: 24,
-    marginBottom: 20,
-  },
-  infoTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#fff',
-    marginBottom: 12,
-  },
-  infoText: {
-    fontSize: 14,
-    lineHeight: 20,
-    color: '#e0e0e0',
-  },
+  container: { flex: 1, backgroundColor: "#000" },
+  infoBox: { flexDirection: 'row', backgroundColor: 'rgba(124, 255, 0, 0.1)', margin: 20, padding: 16, borderRadius: 12, alignItems: 'center', gap: 12, borderWidth: 1, borderColor: 'rgba(124, 255, 0, 0.3)' },
+  infoText: { color: '#FFF', flex: 1, fontSize: 14 },
+  card: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#1A1A1A', padding: 16, borderRadius: 16, marginBottom: 12, borderWidth: 1, borderColor: '#333' },
+  iconBox: { width: 44, height: 44, borderRadius: 12, backgroundColor: '#333', justifyContent: 'center', alignItems: 'center', marginRight: 12 },
+  title: { color: '#FFF', fontSize: 16, fontWeight: 'bold' },
+  size: { color: '#666', fontSize: 12 },
+  downloadedBtn: { flexDirection: 'row', backgroundColor: '#7CFF00', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 20, alignItems: 'center', gap: 4 },
+  downloadBtn: { backgroundColor: '#FFF', width: 36, height: 36, borderRadius: 18, justifyContent: 'center', alignItems: 'center' },
+  btnText: { fontSize: 12, fontWeight: 'bold' }
 });

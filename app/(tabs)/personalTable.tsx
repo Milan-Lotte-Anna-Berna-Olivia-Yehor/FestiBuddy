@@ -1,126 +1,174 @@
-import { Artists } from "@/constants/artistList";
-import { Events } from "@/constants/eventList";
-import { auth, db } from "@/firebase/firebaseConfig";
-import { onAuthStateChanged } from "firebase/auth";
-import { doc, onSnapshot, setDoc } from "firebase/firestore";
-import React, { useEffect, useState } from "react";
-import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useFocusEffect, useRouter } from "expo-router";
+import React, { useCallback, useState } from "react";
+import {
+    SectionList,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Event, eventList, Performance } from "../../constants/eventList";
+
+// Typ pre sekciu
+interface PlanSection {
+  title: string;
+  event: Event;
+  data: Performance[];
+}
 
 export default function PersonalTimetable() {
-    const [likedArtists, setLikedArtists] = useState<number[] | null>(null);
+  const router = useRouter();
+  const [sections, setSections] = useState<PlanSection[]>([]);
 
+  useFocusEffect(
+    useCallback(() => {
+      loadMyPlan();
+    }, [])
+  );
 
-    useEffect(() => {
-    const unsubscribeAuth = onAuthStateChanged(auth, user => {
-        if (!user) return;
+  const loadMyPlan = async () => {
+    try {
+      const storedLikes = await AsyncStorage.getItem("likedPerformances");
+      const likedIds: number[] = storedLikes ? JSON.parse(storedLikes) : [];
 
-        const userRef = doc(db, "users", user.uid);
+      if (likedIds.length === 0) {
+        setSections([]);
+        return;
+      }
 
-        const unsubscribeSnap = onSnapshot(userRef, snap => {
-        if (snap.exists()) {
-            const likes = snap.data()?.likedArtists || [];
-            setLikedArtists(likes.map(Number));
-        } else {
-            setLikedArtists([]);
+      // Vytvoríme sekcie pre každý event, ktorý má liknutých umelcov
+      const newSections: PlanSection[] = [];
+
+      eventList.forEach(event => {
+        const myPerformances = event.performances.filter(p => likedIds.includes(p.id));
+        
+        if (myPerformances.length > 0) {
+          // Zoradíme podľa času
+          myPerformances.sort((a, b) => a.time.localeCompare(b.time));
+          
+          newSections.push({
+            title: event.title,
+            event: event,
+            data: myPerformances
+          });
         }
-        });
+      });
 
-        // Cleanup snapshot listener when auth changes
-        return () => unsubscribeSnap();
-    });
+      // Zoradíme sekcie: Live event prvý
+      newSections.sort((a, b) => (a.event.status === 'live' ? -1 : 1));
+      
+      setSections(newSections);
+    } catch (e) { console.error(e); }
+  };
 
-    return () => unsubscribeAuth();
-    }, []);
+  const openEventDetail = (id: number) => {
+    router.push({ pathname: "/modalEvent", params: { eventId: id } });
+  };
 
+  return (
+    <SafeAreaView style={styles.container}>
+      <Text style={styles.screenTitle}>My Festival Plan</Text>
+      
+      {sections.length === 0 ? (
+        <View style={styles.emptyState}>
+          <Ionicons name="heart-dislike-outline" size={60} color="#333" />
+          <Text style={styles.emptyText}>Your plan is empty.</Text>
+          <Text style={styles.emptySubText}>Like artists to see them here.</Text>
+        </View>
+      ) : (
+        <SectionList
+          sections={sections}
+          keyExtractor={(item) => item.id.toString()}
+          contentContainerStyle={{ paddingBottom: 100, paddingHorizontal: 20 }}
+          stickySectionHeadersEnabled={false}
+          renderSectionHeader={({ section: { event } }) => (
+            <TouchableOpacity 
+              activeOpacity={0.8}
+              onPress={() => openEventDetail(event.id)}
+              style={styles.sectionHeader}
+            >
+              <View style={styles.headerRow}>
+                 <Text style={styles.eventTitle}>{event.title}</Text>
+                 {event.status === 'live' && (
+                   <View style={styles.liveBadge}>
+                     <View style={styles.liveDot} />
+                     <Text style={styles.liveText}>LIVE</Text>
+                   </View>
+                 )}
+              </View>
+              <View style={styles.locationRow}>
+                <Ionicons name="location-outline" size={14} color="#888" />
+                <Text style={styles.eventLocation}>{event.location}</Text>
+              </View>
+            </TouchableOpacity>
+          )}
+          renderItem={({ item }) => (
+            <View style={styles.card}>
+              <View style={styles.timeContainer}>
+                <Text style={styles.timeText}>{item.time.split(' - ')[0]}</Text>
+                <Text style={styles.dayText}>{item.day.substring(0,3)}</Text>
+              </View>
+              
+              <View style={styles.separator} />
+              
+              <View style={styles.infoContainer}>
+                <Text style={styles.artistName}>{item.artistName}</Text>
+                <Text style={styles.stageName}>{item.stage}</Text>
+              </View>
 
-    if (likedArtists === null) {
-        return (
-        <SafeAreaView style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "#000" }}>
-            <Text style={{ color: "#fff" }}>Loading your timetable...</Text>
-        </SafeAreaView>
-        );
-    }
-
-    const toggleLike = async (artistId: number) => {
-        const user = auth.currentUser;
-        if (!user) return;
-    
-        const userRef = doc(db, "users", user.uid);
-        const isLiked = likedArtists.includes(artistId);
-    
-        let newLikes: number[];
-
-        if (isLiked) {
-        // Unlike
-        newLikes = likedArtists.filter(id => id !== artistId);
-        } else {
-        // Like
-        newLikes = [...likedArtists, artistId];
-        }
-
-        // Optimistic update
-        setLikedArtists(newLikes);
-
-        // Save to Firestore
-        await setDoc(userRef, { likedArtists: newLikes }, { merge: true });
-    };
-  
-
-    // Filter events to only those with liked artists
-    const myEvents = Events.filter(event =>
-        event.artists.some(ar => likedArtists.includes(ar.id))
-    );
-
-    if (myEvents.length === 0) {
-        return (
-        <SafeAreaView style={styles.container}>
-            <Text style={{ color: "#fff", textAlign: "center", marginTop: 20 }}>
-            You haven’t liked any artists yet.
-            </Text>
-        </SafeAreaView>
-        );
-    }
-
-    return (
-        <SafeAreaView style={styles.container}>
-        <ScrollView contentContainerStyle={{ paddingBottom: 120 }}>
-            {myEvents.map(event => (
-            <View key={event.id} style={styles.event}>
-                <Text style={styles.eventTitle}>{event.title}</Text>
-
-                {event.artists
-                .filter(ar => likedArtists.includes(ar.id))
-                .map(ar => {
-                    const artist = Artists[ar.id];
-                    return (
-                    <View key={ar.id} style={styles.row}>
-                        <Text style={styles.time}>
-                        {ar.start_time} {"\n"} {ar.end_time}
-                        </Text>
-                        <Image
-                        source={require("@/assets/images/artist.png")}
-                        style={styles.avatar}
-                        />
-                        <Text style={styles.artist}>{artist.name}</Text>
-                        <TouchableOpacity onPress={() => toggleLike(ar.id)}>
-                            <Text style={{ color: likedArtists.includes(ar.id) ? "#ff5fa2" : "#fff", fontSize: 18 }}>♥</Text>
-                        </TouchableOpacity>
-                    </View>
-                    );
-                })}
+              <Ionicons name="heart" size={20} color="#7CFF00" />
             </View>
-            ))}
-        </ScrollView>
-        </SafeAreaView>
-    );
+          )}
+          renderSectionFooter={() => <View style={{height: 20}} />} // Medzera medzi sekciami
+        />
+      )}
+    </SafeAreaView>
+  );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#000" },
-  event: { marginBottom: 24, borderBottomWidth: 1, borderBottomColor: "#222" },
-  eventTitle: { color: "#ff5fa2", fontSize: 20, fontWeight: "700", margin: 12 },
-  row: { flexDirection: "row", alignItems: "center", padding: 14 },
-  time: { color: "#aaa", width: 50, fontSize: 12 },
-  avatar: { width: 48, height: 48, borderRadius: 6, marginHorizontal: 12 },
-  artist: { flex: 1, color: "#fff", fontSize: 16 },
+  screenTitle: { color: "#FFF", fontSize: 32, fontWeight: "bold", padding: 20, paddingBottom: 10 },
+  
+  emptyState: { flex: 1, justifyContent: "center", alignItems: "center" },
+  emptyText: { color: "#FFF", fontSize: 18, fontWeight: 'bold', marginTop: 20 },
+  emptySubText: { color: "#666", marginTop: 8 },
+
+  sectionHeader: {
+    backgroundColor: '#111',
+    padding: 16,
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#333',
+    marginBottom: 2,
+  },
+  headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  eventTitle: { color: '#FFF', fontSize: 22, fontWeight: 'bold' },
+  liveBadge: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#FF0000', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 12 },
+  liveDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: '#FFF', marginRight: 4 },
+  liveText: { color: '#FFF', fontSize: 10, fontWeight: 'bold' },
+  locationRow: { flexDirection: 'row', alignItems: 'center', marginTop: 4, gap: 4 },
+  eventLocation: { color: '#888', fontSize: 14 },
+
+  card: {
+    flexDirection: 'row',
+    backgroundColor: '#1A1A1A',
+    padding: 16,
+    marginBottom: 8,
+    borderRadius: 12, // Ak je pod hlavickou
+    alignItems: 'center',
+  },
+  timeContainer: { alignItems: 'center', width: 50 },
+  timeText: { color: '#FFF', fontWeight: 'bold', fontSize: 16 },
+  dayText: { color: '#666', fontSize: 12, textTransform: 'uppercase' },
+  
+  separator: { width: 1, height: '80%', backgroundColor: '#333', marginHorizontal: 16 },
+  
+  infoContainer: { flex: 1 },
+  artistName: { color: '#FFF', fontSize: 18, fontWeight: '600' },
+  stageName: { color: '#7CFF00', fontSize: 12, marginTop: 4, textTransform: 'uppercase', fontWeight: 'bold' },
 });

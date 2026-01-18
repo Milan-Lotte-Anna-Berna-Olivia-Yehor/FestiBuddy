@@ -1,88 +1,48 @@
-import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Ionicons } from "@expo/vector-icons";
+import React from "react";
+import { StyleSheet, Switch, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { ScreenHeader } from "../../components/ScreenHeader";
 
-export default function ShareLocation() {
-  const router = useRouter();
-  const { friendName } = useLocalSearchParams();
+export default function ShareLocationScreen() {
+  const [isSharing, setIsSharing] = React.useState(true);
 
   return (
-    <>
-      <Stack.Screen options={{ headerShown: true, title: '', headerStyle: { backgroundColor: '#000' }, headerTintColor: '#fff', headerTitleStyle: { color: '#fff' }, headerShadowVisible: false}} />
-      <View style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top']}>
+      <ScreenHeader title="Location Sharing" />
 
-        <Text style={styles.shareText}>Share your real time location with:</Text>
-
-        <View style={styles.friendInfo}>
-          <View style={styles.profilePic}></View>
-          <Text style={styles.friendName}>{friendName || 'John Doe'}</Text>
+      <View style={styles.content}>
+        <View style={styles.mapPreview}>
+             <Ionicons name="map" size={60} color="#333" />
+             <Text style={{color: '#666', marginTop: 10}}>Map Preview</Text>
         </View>
 
-        <Image source={require('../../assets/images/friends_location-removebg-preview.png')} style={styles.locationIcon} />
-
-        <Text style={styles.streetName}>Main Festival Street</Text>
-
-        <TouchableOpacity style={styles.shareButton} onPress={() => alert('Location shared!')}>
-          <Text style={styles.shareButtonText}>Share My Location</Text>
-        </TouchableOpacity>
+        <View style={styles.card}>
+            <View style={{flex: 1}}>
+                <Text style={styles.label}>Share My Live Location</Text>
+                <Text style={styles.desc}>Allow friends to see you on the map</Text>
+            </View>
+            <Switch 
+                value={isSharing} 
+                onValueChange={setIsSharing}
+                trackColor={{ false: "#333", true: "#7CFF00" }}
+            />
+        </View>
+        
+        <Text style={styles.statusText}>
+            {isSharing ? "You are currently visible to 12 friends." : "You are invisible."}
+        </Text>
       </View>
-    </>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingTop: 50,
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    backgroundColor: '#000',
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: '600',
-    marginBottom: 20,
-    color: '#fff',
-  },
-  shareText: {
-    fontSize: 18,
-    color: '#fff',
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-  friendInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  profilePic: { 
-    width: 70,
-    height: 70,
-    backgroundColor: '#87ceeb',
-    borderRadius: 10,
-    marginRight: 10,
-  },
-  friendName: {
-    fontSize: 20,
-    color: '#fff',
-  },
-  locationIcon: {
-    width: 200,
-    height: 200,
-    marginBottom: 50,
-  },
-  streetName: {
-    fontSize: 16,
-    color: '#fff',
-    marginBottom: 50,
-  },
-  shareButton: {
-    backgroundColor: '#b0ff4b',
-    borderRadius: 20,
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-  },
-  shareButtonText: {
-    color: '#2e2e2e',
-    fontSize: 16,
-  },
+  container: { flex: 1, backgroundColor: "#000" },
+  content: { padding: 20 },
+  mapPreview: { height: 200, backgroundColor: '#111', borderRadius: 20, justifyContent: 'center', alignItems: 'center', marginBottom: 30, borderWidth: 1, borderColor: '#333' },
+  card: { flexDirection: 'row', backgroundColor: '#1A1A1A', padding: 20, borderRadius: 16, alignItems: 'center', borderWidth: 1, borderColor: '#333' },
+  label: { color: '#FFF', fontSize: 18, fontWeight: 'bold' },
+  desc: { color: '#888', marginTop: 4 },
+  statusText: { color: '#7CFF00', textAlign: 'center', marginTop: 20, fontSize: 14 }
 });
