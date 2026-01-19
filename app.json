@@ -28,7 +28,9 @@
       "permissions": [
         "android.permission.ACCESS_FINE_LOCATION",
         "android.permission.BLUETOOTH_SCAN",
-        "android.permission.BLUETOOTH_CONNECT"
+        "android.permission.BLUETOOTH_CONNECT",
+        "android.permission.INTERNET",
+        "android.permission.ACCESS_WIFI_STATE"
       ],
       "edgeToEdgeEnabled": true
     },
@@ -51,13 +53,21 @@
         }
       ],
       [
-        "@config-plugins/react-native-ble-plx",
+        "react-native-ble-plx",
         {
           "isBackgroundEnabled": true,
           "modes": [
             "central"
           ],
-          "bluetoothAlwaysPermission": "Allow FestiBuddy to connect to your wristband?"
+          "bluetoothAlwaysPermission": "Allow FestiBuddy to connect to your wristband?",
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "usesCleartextTraffic": true
+          }
         }
       ]
     ],
