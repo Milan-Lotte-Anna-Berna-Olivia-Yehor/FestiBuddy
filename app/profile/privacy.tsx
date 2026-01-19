@@ -1,94 +1,142 @@
 import { Ionicons } from "@expo/vector-icons";
-import React, { useState } from "react";
-import { ScrollView, StyleSheet, Switch, Text, TouchableOpacity, View } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import React, { useEffect, useState } from "react";
+import { ActivityIndicator, Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ScreenHeader } from "../../components/ScreenHeader";
+import { bleService } from "../../services/BLEService"; // Import našej služby
 
-export default function PrivacyScreen() {
-  const [profileVisible, setProfileVisible] = useState(true);
-  const [showLocation, setShowLocation] = useState(true);
-  const [allowTags, setAllowTags] = useState(false);
+export default function PairBraceletScreen() {
+  const [isScanning, setIsScanning] = useState(false);
+  const [isPaired, setIsPaired] = useState(false);
+  const [statusText, setStatusText] = useState("Ready to pair");
 
-  const SettingRow = ({ label, value, onValueChange, desc }: any) => (
-    <View style={styles.row}>
-       <View style={{flex: 1}}>
-          <Text style={styles.label}>{label}</Text>
-          <Text style={styles.desc}>{desc}</Text>
-       </View>
-       <Switch 
-          value={value} 
-          onValueChange={onValueChange}
-          trackColor={{ false: "#333", true: "#7CFF00" }}
-       />
-    </View>
-  );
+  useEffect(() => {
+    checkStatus();
+    // Vyžiadame povolenia pri otvorení obrazovky
+    bleService.requestPermissions();
+  }, []);
+
+  const checkStatus = async () => {
+    const paired = await AsyncStorage.getItem("isBraceletPaired");
+    if (paired === "true") {
+        setIsPaired(true);
+        setStatusText("Device Connected");
+    }
+  };
+
+  const startScan = () => {
+    if (isScanning) return;
+    
+    setIsScanning(true);
+    setStatusText("Scanning for FestiBuddy_Node...");
+
+    bleService.scanAndConnect(
+        () => {
+            // Success Callback
+            setIsScanning(false);
+            setIsPaired(true);
+            setStatusText("Connected Successfully! 🎉");
+            Alert.alert("Success", "Your bracelet is now paired and synced!");
+        },
+        (error) => {
+            // Error Callback
+            setIsScanning(false);
+            setStatusText("Scan failed. Try again.");
+            Alert.alert("Error", "Could not find bracelet. Make sure it's ON.\n\n" + error);
+        }
+    );
+  };
+
+  const disconnect = async () => {
+      await bleService.disconnect();
+      setIsPaired(false);
+      setStatusText("Disconnected");
+  };
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-      <ScreenHeader title="Privacy & Security" rightIcon="shield-checkmark-outline" />
+      <ScreenHeader title="Pair Bracelet" />
 
-      <ScrollView contentContainerStyle={styles.content}>
-        <Text style={styles.sectionTitle}>Visibility</Text>
-        <View style={styles.card}>
-            <SettingRow 
-               label="Public Profile" 
-               desc="Allow others to find you by name"
-               value={profileVisible}
-               onValueChange={setProfileVisible}
-            />
-            <View style={styles.divider} />
-            <SettingRow 
-               label="Share Live Location" 
-               desc="Visible to added friends only"
-               value={showLocation}
-               onValueChange={setShowLocation}
-            />
-             <View style={styles.divider} />
-            <SettingRow 
-               label="Photo Tagging" 
-               desc="Allow friends to tag you in photos"
-               value={allowTags}
-               onValueChange={setAllowTags}
-            />
+      <View style={styles.content}>
+        {/* SCANNING ANIMATION CIRCLE */}
+        <View style={[styles.scanCircle, isPaired && styles.pairedCircle]}>
+            {isScanning ? (
+                <ActivityIndicator size="large" color="#7CFF00" />
+            ) : (
+                <Ionicons 
+                    name={isPaired ? "checkmark-circle" : "bluetooth"} 
+                    size={80} 
+                    color={isPaired ? "#000" : "#7CFF00"} 
+                />
+            )}
+            
+            {/* Ripple effect only when scanning */}
+            {isScanning && <View style={styles.ripple} />}
         </View>
 
-        <Text style={styles.sectionTitle}>Data & Documents</Text>
-        <View style={styles.card}>
-            <TouchableOpacity style={styles.linkRow}>
-                <Text style={styles.linkText}>Terms of Service</Text>
-                <Ionicons name="chevron-forward" size={20} color="#666" />
-            </TouchableOpacity>
-            <View style={styles.divider} />
-            <TouchableOpacity style={styles.linkRow}>
-                <Text style={styles.linkText}>Privacy Policy</Text>
-                <Ionicons name="chevron-forward" size={20} color="#666" />
-            </TouchableOpacity>
-             <View style={styles.divider} />
-            <TouchableOpacity style={styles.linkRow}>
-                <Text style={styles.linkText}>Export My Data</Text>
-                <Ionicons name="download-outline" size={20} color="#7CFF00" />
-            </TouchableOpacity>
-        </View>
+        <Text style={[styles.statusText, isPaired && {color: '#7CFF00'}]}>
+            {statusText}
+        </Text>
         
-        <TouchableOpacity style={styles.deleteButton}>
-             <Text style={styles.deleteText}>Delete Account</Text>
-        </TouchableOpacity>
-      </ScrollView>
+        <Text style={styles.hintText}>
+            {isPaired 
+                ? "Your wristband is active. You can control the light color from your profile or sync with the crowd."
+                : "Hold the button on your wristband for 3 seconds until it blinks blue."
+            }
+        </Text>
+
+        {!isPaired ? (
+            <TouchableOpacity 
+                style={[styles.scanButton, isScanning && {opacity: 0.7}]} 
+                onPress={startScan}
+                disabled={isScanning}
+            >
+                <Text style={styles.btnText}>
+                    {isScanning ? "Scanning..." : "Start Scan"}
+                </Text>
+            </TouchableOpacity>
+        ) : (
+            <TouchableOpacity 
+                style={[styles.scanButton, styles.disconnectBtn]} 
+                onPress={disconnect}
+            >
+                <Text style={[styles.btnText, {color: '#FFF'}]}>Disconnect</Text>
+            </TouchableOpacity>
+        )}
+      </View>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#000" },
-  content: { padding: 20 },
-  sectionTitle: { color: '#7CFF00', fontSize: 12, fontWeight: 'bold', textTransform: 'uppercase', marginBottom: 10, marginLeft: 10 },
-  card: { backgroundColor: '#1A1A1A', borderRadius: 16, marginBottom: 24, borderWidth: 1, borderColor: '#333' },
-  row: { flexDirection: 'row', alignItems: 'center', padding: 16 },
-  label: { color: '#FFF', fontSize: 16, fontWeight: '600' },
-  desc: { color: '#888', fontSize: 12, marginTop: 4 },
-  divider: { height: 1, backgroundColor: '#222', marginHorizontal: 16 },
-  linkRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16 },
-  linkText: { color: '#FFF', fontSize: 16 },
-  deleteButton: { alignItems: 'center', marginTop: 20 },
-  deleteText: { color: '#FF3B30', fontSize: 14, fontWeight: 'bold' }
+  content: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 20 },
+  
+  scanCircle: {
+    width: 200, height: 200, borderRadius: 100, backgroundColor: 'rgba(124, 255, 0, 0.1)',
+    justifyContent: 'center', alignItems: 'center', marginBottom: 30,
+    borderWidth: 2, borderColor: '#7CFF00'
+  },
+  pairedCircle: {
+    backgroundColor: '#7CFF00', // Plná zelená keď je pripojené
+    borderColor: '#7CFF00'
+  },
+  ripple: {
+    position: 'absolute', width: 240, height: 240, borderRadius: 120,
+    borderWidth: 1, borderColor: 'rgba(124, 255, 0, 0.3)',
+  },
+  
+  statusText: { color: '#FFF', fontSize: 24, fontWeight: 'bold', marginBottom: 10, textAlign: 'center' },
+  hintText: { color: '#888', textAlign: 'center', fontSize: 16, marginBottom: 50, paddingHorizontal: 20, lineHeight: 22 },
+  
+  scanButton: {
+    backgroundColor: '#7CFF00', paddingVertical: 18, paddingHorizontal: 60, borderRadius: 30,
+    width: '100%', alignItems: 'center'
+  },
+  disconnectBtn: {
+    backgroundColor: '#333',
+    borderWidth: 1, borderColor: '#666'
+  },
+  btnText: { color: '#000', fontSize: 18, fontWeight: 'bold' }
 });

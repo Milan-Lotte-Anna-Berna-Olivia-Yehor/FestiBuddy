@@ -25,6 +25,7 @@ export default function RootLayout() {
   useEffect(() => {
     if (initializing) return; // Kým nevieme, kto si, nerobíme nič
 
+    // Zistíme, v ktorej skupine sa používateľ nachádza
     const inAuthGroup = segments[0] === "(auth)" || segments[0] === "(auth-organizer)";
     const inTabsGroup = segments[0] === "(tabs)" || segments[0] === "(tabs-organizer)";
     const atWelcome = segments.length === 0 || segments[0] === "index";
@@ -36,7 +37,7 @@ export default function RootLayout() {
         if (inTabsGroup) {
           router.replace("/");
         }
-        // Ak je na Welcome alebo v Auth, necháme ho tam
+        // Ak je na Welcome alebo v Auth (login), necháme ho tam
       } 
       
       // B. POUŽÍVATEĽ JE PRIHLÁSENÝ
@@ -77,7 +78,6 @@ export default function RootLayout() {
       }}>
         <Stack.Screen name="index" />
         <Stack.Screen name="(auth)" />
-        <Stack.Screen name="(auth-organizer)" />
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="(tabs-organizer)" />
         
