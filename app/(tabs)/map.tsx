@@ -22,14 +22,15 @@ const MAP_HEIGHT = height * 0.7;
 // POIs relative to map (0-1 coordinates, easier to manage)
 const POIs = [
   //Stages
-  { id: 1, title: "Main Stage", type: "stage", x: 0.9, y: 0.25, icon: "musical-notes", desc: "Headliners Area" },
+  { id: 1, title: "Main Stage", type: "stage", x: 0.56, y: 0.50, icon: "musical-notes", desc: "Headliners Area" },
   { id: 2, title: "Techno Dome", type: "stage", x: 0.3, y: 0.5, icon: "flash", desc: "Hard Style" },
-  { id: 3, title: "Chill Garden", type: "chill", x: 0.8, y: 0.5, icon: "leaf", desc: "Relax Zone" },
-  { id: 4, title: "Lockers", type: "service", x: 0.85, y: 0.85, icon: "key", desc: "Safe Storage" },
-  { id: 5, title: "Toilets", type: "service", x: 0.15, y: 0.8, icon: "water", desc: "Restrooms" },
+  { id: 3, title: "Chill Garden", type: "chill", x: 0.72, y: 0.52, icon: "leaf", desc: "Relax Zone" },
+  { id: 4, title: "Lockers", type: "service", x: 0.4, y: 0.4, icon: "key", desc: "Safe Storage" },
+  { id: 5, title: "Toilets1", type: "service", x: 0.4, y: 0.55, icon: "water", desc: "Restrooms" },
+  { id: 6, title: "Toilets2", type: "service", x: 0.65, y: 0.42, icon: "water", desc: "Restrooms" },
 ];
 
-const USER_START = { x: 0.5, y: 0.5 }; // Center bottom
+const USER_START = { x: 0.30, y: 0.54 }; // Center bottom
 
 export default function MapScreen() {
   const zoomRef = useRef<ReactNativeZoomableView | null>(null);
