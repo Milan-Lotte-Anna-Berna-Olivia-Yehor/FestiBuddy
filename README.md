@@ -1,50 +1,109 @@
-# Welcome to your Expo app 👋
+# FestiBuddy 🎸✨
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+**FestiBuddy** is an all-in-one companion app designed to revolutionize your festival experience. By combining a powerful multicross-platform mobile application with a custom smart IoT bracelet, FestiBuddy ensures you never miss a beat, find your way around easily, and stay safe in the crowd.
 
-## Get started
+---
 
-1. Install dependencies
+## 🌟 Key Features
 
-   ```bash
-   npm install
-   ```
+### 📅 Smart Lineup & Live Stages
 
-2. Start the app
+* **Real-time Updates**: View currently performing artists across all festival stages.
+* **Personal Favorites**: "Like" your favorite performances to build your own schedule.
+* **Upcoming Events**: Browse a curated list of future festivals and events.
 
-   ```bash
-   npx expo start
-   ```
+### 🗺️ Interactive Festival Map
 
-In the output, you'll find options to open the app in a
+* **Live POIs**: Locate stages, chill zones, lockers, and restrooms with ease.
+* **Navigation**: Get direct visual routes from your current location to any Point of Interest.
+* **Zoomable View**: High-detail SVG-based map with smooth zoom and pan controls.
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+### 🚨 Safety First (SOS System)
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+* **Emergency Signal**: Trigger a high-intensity red strobe on your wristband during emergencies.
+* **Haptic Feedback**: The app provides tactile confirmation when the SOS signal is active.
+* **One-Touch Stop**: Deactivate the signal immediately once help arrives.
 
-## Get a fresh project
+### 🤖 AI Festival Assistant
 
-When you're ready, run:
+* **Smart Chatbot**: Ask "Festival Buddy" about pairing, stage locations, or safety info.
+* **Quick Questions**: One-tap chips for common queries like "Where is the WC?" or "SOS Help".
 
+### ⌚ Smart Wristband Integration
+
+* **BLE Pairing**: Seamlessly connect your phone to your ESP32-powered wristband.
+* **Organizer Sync**: Through UDP broadcasting, festival organizers can synchronize all wristband colors for a massive light show during headliner sets.
+* **Hardware Powered by FastLED**: High-performance animations and color management.
+
+---
+
+## 🛠️ Tech Stack
+
+### Mobile Application
+
+* **Framework**: Expo / React Native
+* **Language**: TypeScript
+* **State Management**: React Hooks & AsyncStorage
+* **Navigation**: Expo Router (File-based)
+* **Backend**: Firebase
+* **Connectivity**: `react-native-ble-plx` (Bluetooth) & `react-native-udp`
+
+### Hardware (Smart Wristband)
+
+* **Microcontroller**: ESP32
+* **Framework**: Arduino / PlatformIO
+* **Libraries**: FastLED for WS2812B LED control.
+
+---
+
+## 🚀 Getting Started
+
+### 1. Mobile App Setup
+
+1. **Install dependencies**:
 ```bash
-npm run reset-project
+npm install
+
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
 
-## Learn more
+2. **Start the app**:
+```bash
+npx expo start
 
-To learn more about developing your project with Expo, look at the following resources:
+```
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
 
-## Join the community
+*Open the app via Expo Go (iOS/Android) or a development build.*
 
-Join our community of developers creating universal apps.
+### 2. Hardware Setup
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+1. Open the `device/` directory in **VS Code** with the **PlatformIO** extension installed.
+2. Connect your **ESP32** via USB.
+3. Modify the `ST_SSID` and `ST_PASS` in `device/src/main.cpp` to match your local WiFi for UDP synchronization testing.
+4. **Upload** the code to your device.
+
+---
+
+## 📂 Project Structure
+
+* `/app`: The main React Native application source code (routing and screens).
+* `/assets`: App icons, logos, and festival map images.
+* `/components`: Reusable UI elements like buttons and headers.
+* `/constants`: Data for artists, events, and chatbot responses.
+* `/device`: ESP32 firmware and PlatformIO configuration.
+* `/services`: BLE and UDP communication logic.
+
+---
+
+## 🛡️ Permissions
+
+The app requires the following permissions for full functionality:
+
+* **Bluetooth**: For pairing and controlling your wristband.
+* **Location**: Necessary for Bluetooth scanning (Android requirement).
+* **Internet**: For real-time updates and synchronization.
+
+---
+
+Developed with ❤️ for the festival community.
